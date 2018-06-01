@@ -1,7 +1,7 @@
 === PayFast Gateway for Give ===
-Tags: give, payfast
+Tags: payment gateway, payfast, lsx, give, donations
 Requires at least: 4.0
-Tested up to: 4.5.1
+Tested up to: 4.6.0
 Stable tag: 1.1.0
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -12,7 +12,46 @@ PayFast payment gateway for Give.
 
 PayFast payment gateway for Give.
 
+
+= It's Free, and always ill be =
+We’re firm believers in open source – that’s why we’re releasing the PayFast Payment Gateway for Give plugin for free, forever. 
+
+= Support =
+We offer premium support for this plugin. Premium support that can be purchased via [lsdev.biz](https://www.lsdev.biz/).
+
+= Actively Developed =
+The LSX Banners plugin is actively developed with new features and exciting enhancements all the time. Keep track on the LSX Banners GitHub repository.
+Report any bugs via github issues.
+
+== Installation ==
+1. Log in to your WordPress website (www.yourwebsiteurl.com/wp-admin).
+2. Navigate to “Plugins”, and select “Add New”.
+3. Upload the .zip file you downloaded and click install now.
+4. When the installation is complete, Activate your plugin.
+5. Payfast will now appear under WooCommerce > Settings > Checkout
+
+== Frequently Asked Questions ==
+
+= What does this plugin do? =
+Enables PayFast Payment Gateway
+
+= Where can I get support? =
+For help with add-ons from LightSpeed, use our support package plan.
+
+
+= Where can I report bugs or contribute to the project? =
+Bugs can be reported either in our support account or preferably on the LSX Banners [GitHub repository](https://github.com/lightspeeddevelopment/give-payfast).
+
+= The PayFast Gateway for Give plugin is awesome! Can I contribute? =
+Yes you can! Join in on our [GitHub repository](https://github.com/lightspeeddevelopment/give-payfast)
+
+= I need custom functionality for this plugin. Can you build it? =
+Yes. Just send us a message via [contact form](https://www.lsdev.biz/contact/) with precise information about what you require.
+
 == Changelog ==
+
+= 1.1.2 =
+* Removed API Class
 
 = 1.1.1 =
 * Updated the License class
