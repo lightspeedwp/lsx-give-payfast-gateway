@@ -1,19 +1,18 @@
 <?php
-/*
-* Plugin Name: Give - PayFast Gateway
-* Plugin URI: https://www.lsdev.biz/product/givewp-payfast-integration-addon/
-* Description: LightSpeed’s PayFast Gateway for GiveWP is the only way to use the powerful Give plugin for WordPress to accept Rands in South Africa. Give is a flexible, robust, and simple WordPress plugin for accepting donations directly on your website.
-* Author: LightSpeed
-* Version: 1.1.2
-* Author URI: https://www.lsdev.biz/products/
-* License: GPL3+
-* Text Domain: replaceme
-* Domain Path: /languages/
-*/
 /**
- * @package   give-payfast
- */
+ * Plugin Name: Give - PayFast Gateway
+ * Plugin URI: https://www.lsdev.biz/product/givewp-payfast-integration-addon/
+ * Description: LightSpeed’s PayFast Gateway for GiveWP is the only way to use the powerful Give plugin for WordPress to accept Rands in South Africa. Give is a flexible, robust, and simple WordPress plugin for accepting donations directly on your website.
+ * Author: LightSpeed
+ * Version: 1.1.2
+ * Author URI: https://www.lsdev.biz/products/
+ * License: GPL3+
+ * Text Domain: replaceme
+ * Domain Path: /languages/
 
+ @package give-payfast
+
+ **/
 
 /**
  * Run when the plugin is active, and generate a unique password for the site instance.
@@ -44,8 +43,7 @@ add_action( 'init', 'give_payfast_recurring' );
 add_action( 'give_payfast_cc_form', '__return_false' );
 
 /**
- *	Registers our text domain with WP
- */
+ *	Registers our text domain with WP*/
 function give_payfast_load_textdomain() {
 	load_plugin_textdomain( 'payfast_give', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
@@ -55,7 +53,10 @@ add_action( 'plugins_loaded', 'give_payfast_load_textdomain' );
  * Registers the gateway
  */
 function payfast_register_gateway( $gateways ) {
-	$gateways['payfast'] = array( 'admin_label' => 'PayFast', 'checkout_label' => __( 'PayFast', 'payfast_give' ) );
+	$gateways['payfast'] = array(
+		'admin_label' => 'PayFast',
+		'checkout_label' => __( 'PayFast', 'payfast_give' ),
+	);
 	return $gateways;
 }
 add_filter( 'give_payment_gateways', 'payfast_register_gateway' );
