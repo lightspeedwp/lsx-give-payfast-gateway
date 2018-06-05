@@ -25,12 +25,13 @@ global $give_recurring_payfast;
  */
 class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
+
 	/**
 	 * Setup gateway ID and possibly load API libraries.
 	 *
-	 * @access      public
-	 * @since       1.0
-	 * @return      void
+	 * @access public
+	 * @since  1.0
+	 * @return void
 	 */
 	public function init() {
 
@@ -39,25 +40,24 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 		// create as pending
 		$this->offsite = true;
 
-		//Cancellation action
+		// Cancellation action
 		add_action( 'give_recurring_cancel_payfast_subscription', array( $this, 'cancel' ), 10, 2 );
-		add_action( 'give_subscription_cancelled',array($this,'cancel'), 11, 2);
+		add_action( 'give_subscription_cancelled', array( $this, 'cancel' ), 11, 2 );
 
-		//Validate payfast periods
+		// Validate payfast periods
 		add_action( 'save_post', array( $this, 'validate_recurring_period' ) );
 	}
 
 	/**
 	 * Creates subscription payment profiles and sets the IDs so they can be stored.
 	 *
-	 * @access      public
-	 * @since       1.0
+	 * @access public
+	 * @since  1.0
 	 */
 	public function create_payment_profiles() {
 
 		// Creates a payment profile and then sets the profile ID.
 		$this->subscriptions['profile_id'] = 'payfast-' . $this->purchase_data['purchase_key'];
-
 
 	}
 
@@ -76,7 +76,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 		$recurring_option = isset( $_REQUEST['_give_recurring'] ) ? $_REQUEST['_give_recurring'] : 'no';
 		$set_or_multi     = isset( $_REQUEST['_give_price_option'] ) ? $_REQUEST['_give_price_option'] : '';
 
-		//Sanity Checks
+		// Sanity Checks
 		if ( ! class_exists( 'Give_Recurring' ) ) {
 			return $form_id;
 		}
@@ -96,7 +96,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 			return $form_id;
 		}
 
-		//Is this gateway active
+		// Is this gateway active
 		if ( ! give_is_gateway_active( $this->id ) ) {
 			return $form_id;
 		}
@@ -104,7 +104,6 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 		$message = __( 'PayFast Only allows for Monthly and Yearly recurring donations. Please revise your selection.', 'give-recurring' );
 
 		if ( $set_or_multi === 'multi' && $recurring_option == 'yes_admin' ) {
-
 
 			$prices = isset( $_REQUEST['_give_donation_levels'] ) ? $_REQUEST['_give_donation_levels'] : array( '' );
 			foreach ( $prices as $price_id => $price ) {
@@ -130,12 +129,12 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	/**
 	 * Determines if the subscription can be cancelled
 	 *
-	 * @access      public
-	 * @return      bool
+	 * @access public
+	 * @return bool
 	 */
 	public function can_cancel( $ret, $subscription ) {
 		$ret = false;
-		if('active' === $subscription->status ) {
+		if ( 'active' === $subscription->status ) {
 			$ret = true;
 		}
 		return $ret;
@@ -144,95 +143,94 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	/**
 	 * Contacts Payfast and "Cancels" a subscription
 	 *
-	 * @access      public
-	 * @return      bool
+	 * @access public
+	 * @return bool
 	 */
-	public function cancel( $subscription_id,$subscription ) {
+	public function cancel( $subscription_id, $subscription ) {
 		$give_options = give_get_settings();
 
-		if(isset($subscription->gateway) && 'payfast' !== $subscription->gateway){
+		if ( isset( $subscription->gateway ) && 'payfast' !== $subscription->gateway ) {
 			return false;
 		}
 
-		//passphrase - must be set on the merchant account for recurring billing
+		// passphrase - must be set on the merchant account for recurring billing
 		$passPhrase = $give_options['payfast_passphrase'];
-		if ( isset( $give_options['payfast_passphrase'] ) && !empty($give_options['payfast_passphrase']) ) {
+		if ( isset( $give_options['payfast_passphrase'] ) && ! empty( $give_options['payfast_passphrase'] ) ) {
 			$passPhrase = trim( $give_options['payfast_passphrase'] );
 		}
 
-		//array of the data that will be sent to the API for use in the signature generation
-		//amount, item_name, & item_description must be added here when performing an update call
+		// array of the data that will be sent to the API for use in the signature generation
+		// amount, item_name, & item_description must be added here when performing an update call
 		$hashArray = array(
 			'merchant-id' => '10003644',
-			'version' => 'v1',
-			'timestamp' => date('Y-m-d') . 'T' . date('H:i:s')
+			'version'     => 'v1',
+			'timestamp'   => date( 'Y-m-d' ) . 'T' . date( 'H:i:s' ),
 		);
 
-		//$pfData
+		// $pfData
 		$pfData = $hashArray;
 
-		//construct variables
-		foreach( $pfData as $key => $val )
-		{
-			$pfData[$key] = stripslashes( trim( $val ) );
+		// construct variables
+		foreach ( $pfData as $key => $val ) {
+			$pfData[ $key ] = stripslashes( trim( $val ) );
 		}
 
-		//check if a passphrase has been set - must be set
-		if( isset( $passPhrase ) )
-		{
+		// check if a passphrase has been set - must be set
+		if ( isset( $passPhrase ) ) {
 			$pfData['passphrase'] = stripslashes( trim( $passPhrase ) );
 		}
 
-		//sort the array by key, alphabetically
-		ksort($pfData);
+		// sort the array by key, alphabetically
+		ksort( $pfData );
 
-		//normalise the array into a parameter string
+		// normalise the array into a parameter string
 		$pfParamString = '';
-		foreach( $pfData as $key => $val )
-		{
-			$pfParamString .= $key .'='. urlencode( $val ) .'&';
+		foreach ( $pfData as $key => $val ) {
+			$pfParamString .= $key . '=' . urlencode( $val ) . '&';
 		}
 
-		//remove the last '&' from the parameter string
+		// remove the last '&' from the parameter string
 		$pfParamString = substr( $pfParamString, 0, -1 );
 
-		//hash and push the signature
+		// hash and push the signature
 		$signature = md5( $pfParamString );
 
-		//payload array - required for update call (body values are amount, frequency, date)
-		$payload = []; //used for CURLOPT_POSTFIELDS
+		// payload array - required for update call (body values are amount, frequency, date)
+		$payload = []; // used for CURLOPT_POSTFIELDS
 
-		//set up the url
-		$url = 'https://api.payfast.co.za/subscriptions/'.$subscription->profile_id.'/cancel';
-		if(give_is_test_mode()){
+		// set up the url
+		$url = 'https://api.payfast.co.za/subscriptions/' . $subscription->profile_id . '/cancel';
+		if ( give_is_test_mode() ) {
 			$url .= '?testing=true';
 		}
 
-		//set up cURL
-		$ch = curl_init($url); // add "?testing=true" to the end when testing
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_HEADER, false);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($payload)); //for the body values such as amount, frequency, & date
-		curl_setopt($ch, CURLOPT_VERBOSE, true);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-			'version: v1',
-			'merchant-id: ' . '10003644',
-			'signature: ' . $signature,
-			'timestamp: ' . $hashArray['timestamp']
-		));
+		// set up cURL
+		$ch = curl_init( $url ); // add "?testing=true" to the end when testing
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch, CURLOPT_HEADER, false );
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $ch, CURLOPT_TIMEOUT, 60 );
+		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $payload ) ); // for the body values such as amount, frequency, & date
+		curl_setopt( $ch, CURLOPT_VERBOSE, true );
+		curl_setopt(
+			$ch, CURLOPT_HTTPHEADER, array(
+				'version: v1',
+				'merchant-id: ' . '10003644',
+				'signature: ' . $signature,
+				'timestamp: ' . $hashArray['timestamp'],
+			)
+		);
 
-		//execute and close cURL
-		$data = curl_exec($ch);
-		curl_close($ch);
+		// execute and close cURL
+		$data = curl_exec( $ch );
+		curl_close( $ch );
 
-		$data = json_decode($data);
+		$data = json_decode( $data );
 
-		if(isset($data->code) && $data->code === '200'){
+		if ( isset( $data->code ) && $data->code === '200' ) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 
@@ -242,9 +240,9 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	/**
 	 * Creates payment and redirects to PayFast
 	 *
-	 * @access      public
-	 * @since       1.0
-	 * @return      void
+	 * @access public
+	 * @since  1.0
+	 * @return void
 	 */
 	public function complete_signup() {
 

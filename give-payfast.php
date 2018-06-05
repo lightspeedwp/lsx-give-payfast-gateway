@@ -11,7 +11,6 @@
  * Domain Path: /languages/
 
  @package give-payfast
-
  **/
 
 /**
@@ -43,7 +42,8 @@ add_action( 'init', 'give_payfast_recurring' );
 add_action( 'give_payfast_cc_form', '__return_false' );
 
 /**
-*	Registers our text domain with WP*/
+ *    Registers our text domain with WP
+ */
 function give_payfast_load_textdomain() {
 	load_plugin_textdomain( 'payfast_give', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
@@ -54,7 +54,7 @@ add_action( 'plugins_loaded', 'give_payfast_load_textdomain' );
  */
 function payfast_register_gateway( $gateways ) {
 	$gateways['payfast'] = array(
-		'admin_label' => 'PayFast',
+		'admin_label'    => 'PayFast',
 		'checkout_label' => __( 'PayFast', 'payfast_give' ),
 	);
 	return $gateways;
@@ -130,14 +130,13 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 			$payfast_url = 'https://www.payfast.co.za/eng/process';
 		}
 
-
 		$redirect     = get_permalink( $give_options['success_page'] );
 		$query_string = null;
 
 		$permalink = give_get_failed_transaction_uri();
 		$cancelurl = add_query_arg( 'error', '', $permalink );
 
-		$payfast_args = 'merchant_id=' . $give_options['payfast_customer_id'];
+		$payfast_args  = 'merchant_id=' . $give_options['payfast_customer_id'];
 		$payfast_args .= '&merchant_key=' . $give_options['payfast_key'];
 		$payfast_args .= '&return_url=' . urlencode( apply_filters( 'give_success_page_redirect', $redirect, 'payfast', $query_string ) );
 		$payfast_args .= '&cancel_url=' . urlencode( $cancelurl );
@@ -174,7 +173,7 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 			$payfast_args .= '&passphrase=' . urlencode( $passphrase );
 		}
 
-		update_option('first_signature',md5( $payfast_args ));
+		update_option( 'first_signature', md5( $payfast_args ) );
 
 		$payfast_args .= '&signature=' . md5( $payfast_args );
 
@@ -221,8 +220,8 @@ function payfast_ipn() {
 			$pf_Host = 'https://www.payfast.co.za/eng/query/validate';
 		}
 
-		$pfError       = false;
-		$pfParamString = '';
+		$pfError        = false;
+		$pfParamString  = '';
 		$validateString = '';
 
 		if ( ! $pfError ) {
@@ -240,16 +239,15 @@ function payfast_ipn() {
 
 			if ( isset( $give_options['payfast_passphrase'] ) ) {
 				$passPhrase = trim( $give_options['payfast_passphrase'] );
-				if(!empty( $passPhrase ))
-				{
-					$pfParamString .= '&passphrase='.urlencode( $passPhrase );
+				if ( ! empty( $passPhrase ) ) {
+					$pfParamString .= '&passphrase=' . urlencode( $passPhrase );
 				}
 			}
 		}
 		$signature = md5( $pfParamString );
 
-		if(give_is_test_mode()) {
-			give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %s. Generated Signature %s.', 'payfast_give' ), $_POST['signature'], $signature) );
+		if ( give_is_test_mode() ) {
+			give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
 		}
 
 		if ( $signature != $_POST['signature'] ) {
@@ -290,25 +288,14 @@ function payfast_ipn() {
 		}
 
 		/*
-		 * If it fails for any reason, add that to the order.
-		 */
+		* If it fails for any reason, add that to the order.
+		*/
 		if ( false !== $pfError ) {
-			give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'Payment Failed. The error is %s.', 'payfast_give' ), print_r($pfError,true) ) );
+			give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'Payment Failed. The error is %s.', 'payfast_give' ), print_r( $pfError, true ) ) );
 		} else {
 
-			$response = wp_remote_post( $pfHost, array(
-				'method'      => 'POST',
-				'timeout'     => 60,
-				'redirection' => 5,
-				'httpversion' => '1.0',
-				'blocking'    => true,
-				'headers'     => array(),
-				'body'        => $validateString,
-				'cookies'     => array(),
-			) );
-
-			if(give_is_test_mode()) {
-				give_insert_payment_note($_POST['m_payment_id'], sprintf(__('PayFast ITN Params - %s %s.', 'payfast_give'),$pfHost, print_r(array(
+			$response = wp_remote_post(
+				$pfHost, array(
 					'method'      => 'POST',
 					'timeout'     => 60,
 					'redirection' => 5,
@@ -317,11 +304,30 @@ function payfast_ipn() {
 					'headers'     => array(),
 					'body'        => $validateString,
 					'cookies'     => array(),
-				), true)));
-				give_insert_payment_note($_POST['m_payment_id'], sprintf(__('PayFast ITN Response. %s.', 'payfast_give'), print_r($response['body'], true)));
+				)
+			);
+
+			if ( give_is_test_mode() ) {
+				give_insert_payment_note(
+					$_POST['m_payment_id'], sprintf(
+						__( 'PayFast ITN Params - %1$s %2$s.', 'payfast_give' ), $pfHost, print_r(
+							array(
+								'method'      => 'POST',
+								'timeout'     => 60,
+								'redirection' => 5,
+								'httpversion' => '1.0',
+								'blocking'    => true,
+								'headers'     => array(),
+								'body'        => $validateString,
+								'cookies'     => array(),
+							), true
+						)
+					)
+				);
+				give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast ITN Response. %s.', 'payfast_give' ), print_r( $response['body'], true ) ) );
 			}
 
-			if ( ! is_wp_error( $response ) && ($response['response']['code'] >= 200 || $response['response']['code'] < 300) ) {
+			if ( ! is_wp_error( $response ) && ( $response['response']['code'] >= 200 || $response['response']['code'] < 300 ) ) {
 				$res = $response['body'];
 				if ( $res === false ) {
 					$pfError = $response;
@@ -340,17 +346,22 @@ function payfast_ipn() {
 			if ( strcmp( $result, 'VALID' ) === 0 ) {
 				if ( $_POST['payment_status'] === 'COMPLETE' ) {
 
-					if( !empty( $_POST['custom_str2'] ) ) {
+					if ( ! empty( $_POST['custom_str2'] ) ) {
 						$subscription = new Give_Subscription( $_POST['custom_str2'], true );
 						// Retrieve pending subscription from database and update it's status to active and set proper profile ID.
-						$subscription->update( array( 'profile_id' => $_POST['token'], 'status' => 'active' ) );
+						$subscription->update(
+							array(
+								'profile_id' => $_POST['token'],
+								'status'     => 'active',
+							)
+						);
 					}
 					give_set_payment_transaction_id( $_POST['m_payment_id'], $_POST['pf_payment_id'] );
 					give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Completed. The Transaction Id is %s.', 'payfast_give' ), $_POST['pf_payment_id'] ) );
 					give_update_payment_status( $_POST['m_payment_id'], 'publish' );
 
 				} else {
-					give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Failed. The Response is %s.', 'payfast_give' ), print_r($response['body'],true) ) );
+					give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Failed. The Response is %s.', 'payfast_give' ), print_r( $response['body'], true ) ) );
 				}
 			}
 		}
@@ -361,7 +372,7 @@ add_action( 'wp_head', 'payfast_ipn' );
 /**
  * Registers our PayFast setting with Give.
  *
- * @param $settings
+ * @param  $settings
  * @return array
  */
 function payfast_add_settings( $settings ) {
