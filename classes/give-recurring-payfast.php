@@ -80,7 +80,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 		if ( ! class_exists( 'Give_Recurring' ) ) {
 			return $form_id;
 		}
-		if ( $recurring_option == 'no' ) {
+		if ( 'no' == $recurring_option ) {
 			return $form_id;
 		}
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {

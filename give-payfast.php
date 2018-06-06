@@ -166,11 +166,11 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 
 		}
 
-		if ( isset( $give_options['payfast_passphrase'] ) ) {
-			$passphrase = trim( $give_options['payfast_passphrase'] );
+		if ( isset( $give_options['payfast_pass_phrase'] ) ) {
+			$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
 		}
-		if ( ! empty( $passphrase ) ) {
-			$payfast_args .= '&passphrase=' . urlencode( $passphrase );
+		if ( ! empty( $pass_phrase ) ) {
+			$payfast_args .= '&pass_phrase=' . urlencode( $pass_phrase );
 		}
 
 		update_option( 'first_signature', md5( $payfast_args ) );
@@ -214,10 +214,10 @@ function payfast_ipn() {
 	if ( isset( $_REQUEST['m_payment_id'] ) ) {
 
 		if ( give_is_test_mode() ) {
-			$pf_Host = 'https://sandbox.payfast.co.za/eng/query/validate';
+			$pf_host = 'https://sandbox.payfast.co.za/eng/query/validate';
 			give_insert_payment_note( $_REQUEST['m_payment_id'], 'ITN callback has been triggered.' );
 		} else {
-			$pf_Host = 'https://www.payfast.co.za/eng/query/validate';
+			$pf_host = 'https://www.payfast.co.za/eng/query/validate';
 		}
 
 		$pf_error        = false;
@@ -237,10 +237,10 @@ function payfast_ipn() {
 			}
 			$validate_string = $pf_param_string = substr( $pf_param_string, 0, - 1 );
 
-			if ( isset( $give_options['payfast_passphrase'] ) ) {
-				$passPhrase = trim( $give_options['payfast_passphrase'] );
-				if ( ! empty( $passPhrase ) ) {
-					$pf_param_string .= '&passphrase=' . urlencode( $passPhrase );
+			if ( isset( $give_options['payfast_pass_phrase'] ) ) {
+				$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
+				if ( ! empty( $pass_phrase ) ) {
+					$pf_param_string .= '&pass_phrase=' . urlencode( $pass_phrase );
 				}
 			}
 		}
@@ -250,7 +250,7 @@ function payfast_ipn() {
 			give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
 		}
 
-		if ( $signature != $_POST['signature'] ) {
+		if wp_verify_nonce( $signature != $_POST['signature'] ) {
 			$pf_error = 'SIGNATURE';
 			$error   = array(
 				'oursig' => $signature,
@@ -406,8 +406,8 @@ function payfast_add_settings( $settings ) {
 			'size' => 'regular',
 		),
 		array(
-			'id'   => 'payfast_passphrase',
-			'name' => __( 'Passphrase', 'payfast_give' ),
+			'id'   => 'payfast_pass_phrase',
+			'name' => __( 'pass_phrase', 'payfast_give' ),
 			'desc' => __( 'This is set by yourself in the "Settings" section of the logged in area of the PayFast Dashboard.', 'payfast_give' ),
 			'type' => 'text',
 			'size' => 'regular',
