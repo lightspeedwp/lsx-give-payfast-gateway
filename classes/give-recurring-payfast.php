@@ -37,14 +37,14 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
 		$this->id = 'payfast';
 
-		// create as pending
+		// create as pending.
 		$this->offsite = true;
 
-		// Cancellation action
+		// Cancellation action.
 		add_action( 'give_recurring_cancel_payfast_subscription', array( $this, 'cancel' ), 10, 2 );
 		add_action( 'give_subscription_cancelled', array( $this, 'cancel' ), 11, 2 );
 
-		// Validate payfast periods
+		// Validate payfast periods.
 		add_action( 'save_post', array( $this, 'validate_recurring_period' ) );
 	}
 
@@ -76,7 +76,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 		$recurring_option = isset( $_REQUEST['_give_recurring'] ) ? $_REQUEST['_give_recurring'] : 'no';
 		$set_or_multi     = isset( $_REQUEST['_give_price_option'] ) ? $_REQUEST['_give_price_option'] : '';
 
-		// Sanity Checks
+		// Sanity Checks.
 		if ( ! class_exists( 'Give_Recurring' ) ) {
 			return $form_id;
 		}
@@ -96,7 +96,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 			return $form_id;
 		}
 
-		// Is this gateway active
+		// Is this gateway active.
 		if ( ! give_is_gateway_active( $this->id ) ) {
 			return $form_id;
 		}
@@ -118,7 +118,9 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 			$period = isset( $_REQUEST['_give_period'] ) ? $_REQUEST['_give_period'] : 0;
 
 			if ( in_array( $period, array( 'day', 'week' ) ) ) {
-				wp_die( $message, __( 'Error', 'give-recurring' ), array( 'response' => 400 ) );
+				wp_die( $message, __( 'Error', 'give-recurring' ), array(
+					'response' => 400,
+				) );
 			}
 		}
 
@@ -153,76 +155,76 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 			return false;
 		}
 
-		// passphrase - must be set on the merchant account for recurring billing
-		$passPhrase = $give_options['payfast_passphrase'];
-		if ( isset( $give_options['payfast_passphrase'] ) && ! empty( $give_options['payfast_passphrase'] ) ) {
-			$passPhrase = trim( $give_options['payfast_passphrase'] );
+		// pass_phrase - must be set on the merchant account for recurring billing.
+		$pass_phrase = $give_options['payfast_pass_phrase'];
+		if ( isset( $give_options['payfast_pass_phrase'] ) && ! empty( $give_options['payfast_pass_phrase'] ) ) {
+			$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
 		}
 
 		// array of the data that will be sent to the API for use in the signature generation
-		// amount, item_name, & item_description must be added here when performing an update call
-		$hashArray = array(
+		// amount, item_name, & item_description must be added here when performing an update call.
+		$hash_array = array(
 			'merchant-id' => '10003644',
 			'version'     => 'v1',
 			'timestamp'   => date( 'Y-m-d' ) . 'T' . date( 'H:i:s' ),
 		);
 
-		// $pfData
-		$pfData = $hashArray;
+		// $pf_data
+		$pf_data = $hash_array;
 
-		// construct variables
-		foreach ( $pfData as $key => $val ) {
-			$pfData[ $key ] = stripslashes( trim( $val ) );
+		// construct variables.
+		foreach ( $pf_data as $key => $val ) {
+			$pf_data[ $key ] = stripslashes( trim( $val ) );
 		}
 
-		// check if a passphrase has been set - must be set
-		if ( isset( $passPhrase ) ) {
-			$pfData['passphrase'] = stripslashes( trim( $passPhrase ) );
+		// check if a pass_phrase has been set - must be set.
+		if ( isset( $pass_phrase ) ) {
+			$pf_data['pass_phrase'] = stripslashes( trim( $pass_phrase ) );
 		}
 
-		// sort the array by key, alphabetically
-		ksort( $pfData );
+		// sort the array by key, alphabetically.
+		ksort( $pf_data );
 
-		// normalise the array into a parameter string
-		$pfParamString = '';
-		foreach ( $pfData as $key => $val ) {
-			$pfParamString .= $key . '=' . urlencode( $val ) . '&';
+		// normalise the array into a parameter string.
+		$pf_param_string = '';
+		foreach ( $pf_data as $key => $val ) {
+			$pf_param_string .= $key . '=' . urlencode( $val ) . '&';
 		}
 
-		// remove the last '&' from the parameter string
-		$pfParamString = substr( $pfParamString, 0, -1 );
+		// remove the last '&' from the parameter string.
+		$pf_param_string = substr( $pf_param_string, 0, -1 );
 
-		// hash and push the signature
-		$signature = md5( $pfParamString );
+		// hash and push the signature.
+		$signature = md5( $pf_param_string );
 
-		// payload array - required for update call (body values are amount, frequency, date)
-		$payload = []; // used for CURLOPT_POSTFIELDS
+		// payload array - required for update call (body values are amount, frequency, date).
+		$payload = []; // used for CURLOPT_POSTFIELDS.
 
-		// set up the url
+		// set up the url.
 		$url = 'https://api.payfast.co.za/subscriptions/' . $subscription->profile_id . '/cancel';
 		if ( give_is_test_mode() ) {
 			$url .= '?testing=true';
 		}
 
-		// set up cURL
-		$ch = curl_init( $url ); // add "?testing=true" to the end when testing
+		// set up cURL.
+		$ch = curl_init( $url ); // add "?testing=true" to the end when testing.
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $ch, CURLOPT_HEADER, false );
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt( $ch, CURLOPT_TIMEOUT, 60 );
 		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $payload ) ); // for the body values such as amount, frequency, & date
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $payload ) ); // for the body values such as amount, frequency, & date.
 		curl_setopt( $ch, CURLOPT_VERBOSE, true );
 		curl_setopt(
 			$ch, CURLOPT_HTTPHEADER, array(
 				'version: v1',
 				'merchant-id: ' . '10003644',
 				'signature: ' . $signature,
-				'timestamp: ' . $hashArray['timestamp'],
+				'timestamp: ' . $hash_array['timestamp'],
 			)
 		);
 
-		// execute and close cURL
+		// execute and close cURL.
 		$data = curl_exec( $ch );
 		curl_close( $ch );
 
