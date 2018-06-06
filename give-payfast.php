@@ -220,11 +220,11 @@ function payfast_ipn() {
 			$pf_Host = 'https://www.payfast.co.za/eng/query/validate';
 		}
 
-		$pfError        = false;
-		$pfParamString  = '';
-		$validateString = '';
+		$pf_error        = false;
+		$pf_param_string  = '';
+		$validate_string = '';
 
-		if ( ! $pfError ) {
+		if ( ! $pf_error ) {
 			// Strip any slashes in data.
 			foreach ( $_POST as $key => $val ) {
 				$_POST[ $key ] = stripslashes( $val );
@@ -232,26 +232,26 @@ function payfast_ipn() {
 
 			foreach ( $_POST as $key => $val ) {
 				if ( $key != 'signature' ) {
-					$pfParamString .= $key . '=' . urlencode( $val ) . '&';
+					$pf_param_string .= $key . '=' . urlencode( $val ) . '&';
 				}
 			}
-			$validateString = $pfParamString = substr( $pfParamString, 0, - 1 );
+			$validate_string = $pf_param_string = substr( $pf_param_string, 0, - 1 );
 
 			if ( isset( $give_options['payfast_passphrase'] ) ) {
 				$passPhrase = trim( $give_options['payfast_passphrase'] );
 				if ( ! empty( $passPhrase ) ) {
-					$pfParamString .= '&passphrase=' . urlencode( $passPhrase );
+					$pf_param_string .= '&passphrase=' . urlencode( $passPhrase );
 				}
 			}
 		}
-		$signature = md5( $pfParamString );
+		$signature = md5( $pf_param_string );
 
 		if ( give_is_test_mode() ) {
 			give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
 		}
 
 		if ( $signature != $_POST['signature'] ) {
-			$pfError = 'SIGNATURE';
+			$pf_error = 'SIGNATURE';
 			$error   = array(
 				'oursig' => $signature,
 				'vars'   => $_POST,
@@ -259,30 +259,30 @@ function payfast_ipn() {
 
 		}
 
-		if ( ! $pfError ) {
-			$validHosts = array(
+		if ( ! $pf_error ) {
+			$valid_hosts = array(
 				'www.payfast.co.za',
 				'sandbox.payfast.co.za',
 				'w1w.payfast.co.za',
 				'w2w.payfast.co.za',
 			);
 
-			$validIps  = array();
+			$valid_ips  = array();
 			$sender_ip = payfast_get_realip();
-			foreach ( $validHosts as $pfHostname ) {
-				$ips = gethostbynamel( $pfHostname );
+			foreach ( $valid_hosts as $pf_hostname ) {
+				$ips = gethostbynamel( $pf_hostname );
 
 				if ( $ips !== false ) {
-					$validIps = array_merge( $validIps, $ips );
+					$valid_ips = array_merge( $valid_ips, $ips );
 				}
 			}
 
-			$validIps = array_unique( $validIps );
+			$valid_ips = array_unique( $valid_ips );
 
-			if ( ! in_array( $sender_ip, $validIps ) ) {
-				$pfError = array(
+			if ( ! in_array( $sender_ip, $valid_ips ) ) {
+				$pf_error = array(
 					'FROM'  => $sender_ip,
-					'VALID' => $validIps,
+					'VALID' => $valid_ips,
 				);
 			}
 		}
@@ -290,19 +290,19 @@ function payfast_ipn() {
 		/*
 		* If it fails for any reason, add that to the order.
 		*/
-		if ( false !== $pfError ) {
-			give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'Payment Failed. The error is %s.', 'payfast_give' ), print_r( $pfError, true ) ) );
+		if ( false !== $pf_error ) {
+			give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'Payment Failed. The error is %s.', 'payfast_give' ), print_r( $pf_error, true ) ) );
 		} else {
 
 			$response = wp_remote_post(
-				$pfHost, array(
+				$pf_host, array(
 					'method'      => 'POST',
 					'timeout'     => 60,
 					'redirection' => 5,
 					'httpversion' => '1.0',
 					'blocking'    => true,
 					'headers'     => array(),
-					'body'        => $validateString,
+					'body'        => $validate_string,
 					'cookies'     => array(),
 				)
 			);
@@ -310,7 +310,7 @@ function payfast_ipn() {
 			if ( give_is_test_mode() ) {
 				give_insert_payment_note(
 					$_POST['m_payment_id'], sprintf(
-						__( 'PayFast ITN Params - %1$s %2$s.', 'payfast_give' ), $pfHost, print_r(
+						__( 'PayFast ITN Params - %1$s %2$s.', 'payfast_give' ), $pf_host, print_r(
 							array(
 								'method'      => 'POST',
 								'timeout'     => 60,
@@ -318,7 +318,7 @@ function payfast_ipn() {
 								'httpversion' => '1.0',
 								'blocking'    => true,
 								'headers'     => array(),
-								'body'        => $validateString,
+								'body'        => $validate_string,
 								'cookies'     => array(),
 							), true
 						)
@@ -330,17 +330,17 @@ function payfast_ipn() {
 			if ( ! is_wp_error( $response ) && ( $response['response']['code'] >= 200 || $response['response']['code'] < 300 ) ) {
 				$res = $response['body'];
 				if ( $res === false ) {
-					$pfError = $response;
+					$pf_error = $response;
 
 				}
 			}
 		}
 
-		if ( ! $pfError ) {
+		if ( ! $pf_error ) {
 			$lines = explode( "\n", $res );
 		}
 
-		if ( ! $pfError ) {
+		if ( ! $pf_error ) {
 			$result = trim( $lines[0] );
 
 			if ( strcmp( $result, 'VALID' ) === 0 ) {
