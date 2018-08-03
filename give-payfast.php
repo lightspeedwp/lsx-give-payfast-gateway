@@ -310,7 +310,7 @@ function payfast_ipn() {
 			if ( give_is_test_mode() ) {
 				give_insert_payment_note(
 					$_POST['m_payment_id'], sprintf(
-						//
+						// translators:
 						__( 'PayFast ITN Params - %1$s %2$s.', 'payfast_give' ), $pf_host, print_r(
 							array(
 								'method'      => 'POST',
@@ -325,7 +325,7 @@ function payfast_ipn() {
 						)
 					)
 				);
-				//
+				// translators:
 				give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast ITN Response. %s.', 'payfast_give' ), print_r( $response['body'], true ) ) );
 			}
 
