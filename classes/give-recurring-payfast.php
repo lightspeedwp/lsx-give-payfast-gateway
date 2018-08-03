@@ -6,7 +6,7 @@
  * @author    LightSpeed
  * @license   GPL-3.0+
  * @link
- * @copyright 2016 LightSpeed Team
+ * @copyright 2018 LightSpeed Team
  */
 
 // Exit if accessed directly
@@ -110,7 +110,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 				$period = isset( $price['_give_period'] ) ? $price['_give_period'] : 0;
 
 				if ( in_array( $period, array( 'day', 'week' ) ) ) {
-					wp_die( $message, __( 'Error', 'give-recurring' ), array( 'response' => 400 ) );
+					wp_die( esc_html( $message ), __( 'Error', 'give-recurring' ), array( 'response' => 400 ) );
 				}
 			}
 		} elseif ( Give_Recurring()->is_recurring( $form_id ) ) {
