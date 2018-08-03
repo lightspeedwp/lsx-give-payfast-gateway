@@ -110,8 +110,8 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 				$period = isset( $price['_give_period'] ) ? $price['_give_period'] : 0;
 
 				if ( in_array( $period, array( 'day', 'week' ) ) ) {
-					wp_die( esc_html( $message ), esc_html__( 'Error', 'give-recurring' ), array( 
-						'response' => 400 
+					wp_die( esc_html( $message ), esc_html__( 'Error', 'give-recurring' ), array(
+						'response' => 400,
 					) );
 				}
 			}
