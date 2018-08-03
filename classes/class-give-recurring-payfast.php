@@ -1,6 +1,6 @@
 <?php
 /**
- * An extension of the Give_Recurring_Gateway class
+ * An extension of the Give-Recurring-Gateway Class
  *
  * @package   give-payfast
  * @author    LightSpeed
@@ -118,7 +118,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 			$period = isset( $_REQUEST['_give_period'] ) ? $_REQUEST['_give_period'] : 0;
 
 			if ( in_array( $period, array( 'day', 'week' ) ) ) {
-				wp_die( $message, __( 'Error', 'give-recurring' ), array(
+				wp_die( esc_html( $message) , __( 'Error', 'give-recurring' ), array(
 					'response' => 400,
 				) );
 			}
@@ -218,7 +218,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 		curl_setopt(
 			$ch, CURLOPT_HTTPHEADER, array(
 				'version: v1',
-				'merchant-id: ' . '10003644',
+				'merchant-id: 10003644',
 				'signature: ' . $signature,
 				'timestamp: ' . $hash_array['timestamp'],
 			)

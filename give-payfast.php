@@ -31,7 +31,7 @@ register_activation_hook( __FILE__, 'give_payfast_activate_plugin' );
  */
 function give_payfast_recurring() {
 	if ( class_exists( 'Give_Recurring' ) ) {
-		include_once plugin_dir_path( __FILE__ ) . 'classes/give_recurring_payfast.php';
+		include_once plugin_dir_path( __FILE__ ) . 'classes/class-give-recurring-payfast.php';
 	}
 }
 add_action( 'init', 'give_payfast_recurring' );
