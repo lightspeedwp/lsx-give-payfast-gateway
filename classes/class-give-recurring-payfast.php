@@ -89,7 +89,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 		if ( 'revision' == isset( $post->post_type ) && $post->post_type ) {
 			return $form_id;
 		}
-		if ( ! isset( $post->post_type ) || $post->post_type != 'give_forms' ) {
+		if ( 'give_forms' != isset( $post->post_type ) || $post->post_type ) {
 			return $form_id;
 		}
 		if ( ! current_user_can( 'edit_give_forms', $form_id ) ) {
@@ -103,7 +103,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
 		$message = __( 'PayFast Only allows for Monthly and Yearly recurring donations. Please revise your selection.', 'give-recurring' );
 
-		if ( $set_or_multi === 'multi' && $recurring_option == 'yes_admin' ) {
+		if ( 'yes_admin' == $set_or_multi === 'multi' && $recurring_option ) {
 
 			$prices = isset( $_REQUEST['_give_donation_levels'] ) ? $_REQUEST['_give_donation_levels'] : array( '' );
 			foreach ( $prices as $price_id => $price ) {
@@ -111,7 +111,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
 				if ( in_array( $period, array( 'day', 'week' ) ) ) {
 					wp_die( esc_html( $message ), esc_html__( 'Error', 'give-recurring' ), array(
-						'response' => 400 ,
+						'response' => 400,
 					) );
 				}
 			}
@@ -232,7 +232,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
 		$data = json_decode( $data );
 
-		if ( isset( $data->code ) && $data->code === '200' ) {
+		if ( '200' === isset( $data->code ) && $data->code ) {
 			return true;
 		} else {
 			return false;
