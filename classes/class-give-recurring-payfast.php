@@ -86,7 +86,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
 			return $form_id;
 		}
-		if ( isset( $post->post_type ) && $post->post_type == 'revision' ) {
+		if ( 'revision' == isset( $post->post_type ) && $post->post_type ) {
 			return $form_id;
 		}
 		if ( ! isset( $post->post_type ) || $post->post_type != 'give_forms' ) {
@@ -111,7 +111,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
 				if ( in_array( $period, array( 'day', 'week' ) ) ) {
 					wp_die( esc_html( $message ), esc_html__( 'Error', 'give-recurring' ), array(
-						'response' => 400,
+						'response' => 400 ,
 					) );
 				}
 			}

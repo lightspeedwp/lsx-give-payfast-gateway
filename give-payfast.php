@@ -290,7 +290,7 @@ function payfast_ipn() {
 		* If it fails for any reason, add that to the order.
 		*/
 		if ( false !== $pf_error ) {
-			//
+			// translators:
 			give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'Payment Failed. The error is %s.', 'payfast_give' ), print_r( $pf_error, true ) ) );
 		} else {
 
@@ -359,12 +359,12 @@ function payfast_ipn() {
 						);
 					}
 					give_set_payment_transaction_id( $_POST['m_payment_id'], $_POST['pf_payment_id'] );
-					// 
+					// translators:
 					give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Completed. The Transaction Id is %s.', 'payfast_give' ), $_POST['pf_payment_id'] ) );
 					give_update_payment_status( $_POST['m_payment_id'], 'publish' );
 
 				} else {
-					//  
+					// translators:
 					give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Failed. The Response is %s.', 'payfast_give' ), print_r( $response['body'], true ) ) );
 				}
 			}
