@@ -247,6 +247,7 @@ function payfast_ipn() {
 		$signature = md5( $pf_param_string );
 
 		if ( give_is_test_mode() ) {
+			// translators:
 			give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
 		}
 
@@ -271,7 +272,7 @@ function payfast_ipn() {
 			foreach ( $valid_hosts as $pf_hostname ) {
 				$ips = gethostbynamel( $pf_hostname );
 
-				if ( $ips !== false ) {
+				if ( false !== $ips ) {
 					$valid_ips = array_merge( $valid_ips, $ips );
 				}
 			}
@@ -331,7 +332,7 @@ function payfast_ipn() {
 
 			if ( ! is_wp_error( $response ) && ( $response['response']['code'] >= 200 || $response['response']['code'] < 300 ) ) {
 				$res = $response['body'];
-				if ( $res === false ) {
+				if ( false == $res ) {
 					$pf_error = $response;
 
 				}
