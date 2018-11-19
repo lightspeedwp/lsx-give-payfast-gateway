@@ -231,7 +231,7 @@ function payfast_ipn() {
 			}
 
 			foreach ( $_POST as $key => $val ) {
-				if ( $key != 'signature' ) {
+				if ( 'signature' != $key ) {
 					$pf_param_string .= $key . '=' . urlencode( $val ) . '&';
 				}
 			}
