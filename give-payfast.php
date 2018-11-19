@@ -251,7 +251,7 @@ function payfast_ipn() {
 			give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
 		}
 
-		if wp_verify_nonce( $signature != $_POST['signature'] ) {
+		if wp_verify_nonce(( $signature != $_POST['signature'] )) {
 			$pf_error = 'SIGNATURE';
 			$error   = array(
 				'oursig' => $signature,
