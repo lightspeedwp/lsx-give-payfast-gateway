@@ -16,12 +16,6 @@ PayFast payment gateway for Give.
 = It's Free, and always ill be =
 We’re firm believers in open source – that’s why we’re releasing the PayFast Payment Gateway for Give plugin for free, forever. 
 
-= Support =
-We offer premium support for this plugin. Premium support that can be purchased via [lsdev.biz](https://www.lsdev.biz/).
-
-= Actively Developed =
-The LSX Banners plugin is actively developed with new features and exciting enhancements all the time. Keep track on the LSX Banners GitHub repository.
-Report any bugs via github issues.
 
 == Installation ==
 1. Log in to your WordPress website (www.yourwebsiteurl.com/wp-admin).
@@ -38,7 +32,6 @@ Enables PayFast Payment Gateway
 = Where can I get support? =
 For help with add-ons from LightSpeed, use our support package plan.
 
-
 = Where can I report bugs or contribute to the project? =
 Bugs can be reported either in our support account or preferably on the LSX Banners [GitHub repository](https://github.com/lightspeeddevelopment/give-payfast).
 
@@ -49,6 +42,9 @@ Yes you can! Join in on our [GitHub repository](https://github.com/lightspeeddev
 Yes. Just send us a message via [contact form](https://www.lsdev.biz/contact/) with precise information about what you require.
 
 == Changelog ==
+
+= 1.2 =
+* Removed Email Sharing Option
 
 = 1.1.2 =
 * Removed API Class

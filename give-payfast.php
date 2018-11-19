@@ -235,6 +235,7 @@ function payfast_ipn() {
 					$pf_param_string .= $key . '=' . urlencode( $val ) . '&';
 				}
 			}
+			
 			$validate_string = $pf_param_string = substr( $pf_param_string, 0, - 1 );
 
 			if ( isset( $give_options['payfast_pass_phrase'] ) ) {
