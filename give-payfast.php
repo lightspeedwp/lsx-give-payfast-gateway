@@ -226,7 +226,7 @@ function payfast_ipn() {
 
 		if ( ! $pf_error ) {
 			// Strip any slashes in data.
-			foreach wp_verify_nonce( $_POST as $key => $val ) {
+			foreach ( $_POST as $key => $val ) {
 				$_POST[ $key ] = stripslashes( $val );
 			}
 
@@ -251,7 +251,7 @@ function payfast_ipn() {
 			give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
 		}
 
-		if wp_verify_nonce(( $signature != $_POST['signature'] )) {
+		if ( $signature != $_POST['signature'] ) {
 			$pf_error = 'SIGNATURE';
 			$error   = array(
 				'oursig' => $signature,
@@ -347,7 +347,7 @@ function payfast_ipn() {
 			$result = trim( $lines[0] );
 
 			if ( strcmp( $result, 'VALID' ) === 0 ) {
-				if ( $_POST['payment_status'] === 'COMPLETE' ) {
+				if ( 'COMPLETE' == $_POST['payment_status'] ) {
 
 					if ( ! empty( $_POST['custom_str2'] ) ) {
 						$subscription = new Give_Subscription( $_POST['custom_str2'], true );
