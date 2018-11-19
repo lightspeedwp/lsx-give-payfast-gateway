@@ -103,7 +103,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
 		$message = __( 'PayFast Only allows for Monthly and Yearly recurring donations. Please revise your selection.', 'give-recurring' );
 
-		if ( 'yes_admin' == $set_or_multi == 'multi' && $recurring_option ) {
+		if ( 'yes_admin' == $set_or_multi && 'multi' == $recurring_option ) {
 
 			$prices = isset( $_REQUEST['_give_donation_levels'] ) ? $_REQUEST['_give_donation_levels'] : array( '' );
 			foreach ( $prices as $price_id => $price ) {
