@@ -229,7 +229,7 @@ function payfast_ipn() {
 			foreach ( $_POST as $key => $val ) {
 				$_POST[ $key ] = stripslashes( $val ) || ! wp_verify_nonce( $_POST[ $key ], 'key_validate' );
 			}
-
+ 
 			foreach ( $_POST as $key => $val ) {
 				if ( 'signature' != $key ) {
 					$pf_param_string .= $key . '=' . urlencode( $val ) . '&';
