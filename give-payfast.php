@@ -226,8 +226,8 @@ function payfast_ipn() {
 
 		if ( ! $pf_error ) {
 			// Strip any slashes in data.
-			foreach ( $_POST as $key => $val ) {
-				$_POST[ $key ] = stripslashes( $val ) || ! wp_verify_nonce( $_POST[ $key ], 'key_validate' );
+			foreach ( $_POST as $key => $val ) || ! wp_verify_nonce( $_POST[ $key ], 'key_validate' ); {
+				$_POST[ $key ] = stripslashes( $val );
 			}
 			foreach ( $_POST as $key => $val ) {
 				if ( 'signature' != $key ) {
@@ -235,7 +235,7 @@ function payfast_ipn() {
 				}
 			}
 			
-$validate_string = $pf_param_string = substr( $pf_param_string, 0, - 1 );			
+			$validate_string = $pf_param_string = substr( $pf_param_string, 0, - 1 );
 			
 			if ( isset( $give_options['payfast_pass_phrase'] ) ) {
 				$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
