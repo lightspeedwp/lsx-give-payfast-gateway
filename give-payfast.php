@@ -220,14 +220,15 @@ function payfast_ipn() {
 			$pf_host = 'https://www.payfast.co.za/eng/query/validate';
 		}
 
-		$pf_error        = false;
+		$pf_error         = false;
 		$pf_param_string  = '';
-		$validate_string = '';
+		$validate_string  = '';
 
 		if ( ! $pf_error ) {
 			// Strip any slashes in data.
 			foreach ( $_POST as $key => $val ) {
 				$_POST[ $key ] = stripslashes( $val );
+				|| ! wp_verify_nonce( $_POST[ $key ], 'key_validate' ) 
 			}
 
 			foreach ( $_POST as $key => $val ) {
