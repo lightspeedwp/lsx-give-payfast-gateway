@@ -226,8 +226,8 @@ function payfast_ipn() {
 
 		if ( ! $pf_error ) {
 			// Strip any slashes in data.
-			foreach ( $_POST as $key => $val ) || ! wp_verify_nonce( $_POST[ $key ], 'key_validate' ); {
-				$_POST[ $key ] = stripslashes( $val );
+			foreach ( $_POST as $key => $val ) {
+				$_POST[ $key ] = stripslashes( $val ) || ! wp_verify_nonce( $_POST[ $key ] );
 			}
 			foreach ( $_POST as $key => $val ) {
 				if ( 'signature' != $key ) {
