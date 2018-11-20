@@ -235,7 +235,8 @@ function payfast_ipn() {
 				}
 			}
 			
-			$validate_string = $pf_param_string = substr( $pf_param_string, 0, - 1 );
+			$pf_param_string = substr( $pf_param_string, 0, - 1 );
+			$validate_string = $pf_param_string;
 			
 			if ( isset( $give_options['payfast_pass_phrase'] ) ) {
 				$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
