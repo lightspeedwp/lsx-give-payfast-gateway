@@ -9,7 +9,6 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 PayFast payment gateway for Give.
 
 == Description ==
-
 PayFast payment gateway for Give.
 
 
