@@ -226,7 +226,7 @@ function payfast_ipn() {
 
 		if ( ! $pf_error ) {
 			// Strip any slashes in data.
-			foreach wp_verify_nonce( $_POST as $key => $val ) {
+			foreach ( $_POST as $key => $val ) {
 				$_POST[ $key ] = stripslashes( $val );
 			}
 			foreach ( $_POST as $key => $val ) {
