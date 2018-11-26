@@ -1,6 +1,6 @@
 <?php
 /**
- * An extension of the Give-Recurring-Gateway Class
+ * An extension of the LSX-Recurring-Gateway Class
  *
  * @package   give-payfast
  * @author    LightSpeed
@@ -14,16 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'Give_Recurring_Gateway' ) ) {
+if ( ! class_exists( 'LSX_Recurring_Gateway' ) ) {
 	return;
 }
 
-global $give_recurring_payfast;
+global $lsx_recurring_payfast;
 
 /**
- * Class Give_Recurring_PayFast
+ * Class LSX_Recurring_PayFast
  */
-class Give_Recurring_PayFast extends Give_Recurring_Gateway {
+class LSX_Recurring_PayFast extends LSX_Recurring_Gateway {
 
 
 	/**
@@ -115,7 +115,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 					) );
 				}
 			}
-		} elseif ( Give_Recurring()->is_recurring( $form_id ) ) {
+		} elseif ( LSX_Recurring()->is_recurring( $form_id ) ) {
 
 			$period = isset( $_REQUEST['_give_period'] ) ? $_REQUEST['_give_period'] : 0;
 
@@ -256,4 +256,4 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	}
 }
 
-$give_recurring_payfast = new Give_Recurring_PayFast();
+$lsx_recurring_payfast = new LSX_Recurring_PayFast();
