@@ -10,61 +10,48 @@
  * Text Domain: replaceme
  * Domain Path: /languages/
 
- @package give-payfast
+ @package lsx-give-payfast
  **/
-
-/**
- * Run when the plugin is active, and generate a unique password for the site instance.
- */
-function lsx_payfast_activate_plugin() {
-	$password = get_option( 'lsx_payfast_instance', false );
-	if ( false === $password ) {
-		$password = LSX_Payfast_License::generatePassword();
-		update_option( 'lsx_payfast_instance', $password );
-	}
-	return $password;
-}
-register_activation_hook( __FILE__, 'lsx_payfast_activate_plugin' );
 
 /**
  * Includes the PayFast recurring class, if the recurring addon is active
  */
-function lsx_payfast_recurring() {
-	if ( class_exists( 'LSX_Recurring' ) ) {
+function lsx_give_payfast_recurring() {
+	if ( class_exists( 'Give_Recurring' ) ) {
 		include_once plugin_dir_path( __FILE__ ) . 'classes/class-lsx-recurring-payfast.php';
 	}
 }
-add_action( 'init', 'lsx_payfast_recurring' );
+add_action( 'init', 'lsx_give_payfast_recurring' );
 
 /**
  * PayFast does not need a CC form, so remove it.
  */
-add_action( 'lsx_payfast_cc_form', '__return_false' );
+add_action( 'lsx_give_payfast_cc_form', '__return_false' );
 
 /**
  *    Registers our text domain with WP
  */
-function lsx_payfast_load_textdomain() {
-	load_plugin_textdomain( 'payfast_give', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+function lsx_give_payfast_load_textdomain() {
+	load_plugin_textdomain( 'lsx-give-payfast', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
-add_action( 'plugins_loaded', 'lsx_payfast_load_textdomain' );
+add_action( 'plugins_loaded', 'lsx_give_payfast_load_textdomain' );
 
 /**
  * Registers the gateway
  */
-function payfast_register_gateway( $gateways ) {
+function lsx_give_payfast_register_gateway( $gateways ) {
 	$gateways['payfast'] = array(
 		'admin_label'    => 'PayFast',
-		'checkout_label' => __( 'PayFast', 'payfast_give' ),
+		'checkout_label' => __( 'PayFast', 'lsx-give-payfast' ),
 	);
 	return $gateways;
 }
-add_filter( 'lsx_payment_gateways', 'payfast_register_gateway' );
+add_filter( 'give_payment_gateways', 'lsx_give_payfast_register_gateway' );
 
 /**
  * Processes the order and redirect to the PayFast Merchant page
  */
-function payfast_process_payment( $purchase_data, $recurring = false ) {
+function lsx_give_payfast_process_payment( $purchase_data, $recurring = false ) {
 	$lsx_options = lsx_get_settings();
 
 	// check there is a gateway name.
@@ -86,8 +73,8 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 		'gateway'         => 'payfast',
 	);
 	$required     = array(
-		'give_first' => __( 'First Name is not entered.', 'payfast_give' ),
-		'give_last'  => __( 'Last Name is not entered.', 'payfast_give' ),
+		'give_first' => __( 'First Name is not entered.', 'lsx-give-payfast' ),
+		'give_last'  => __( 'Last Name is not entered.', 'lsx-give-payfast' ),
 	);
 
 	foreach ( $required as $field => $error ) {
@@ -183,13 +170,13 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 	}
 
 }
-add_action( 'lsx_gateway_payfast', 'payfast_process_payment' );
+add_action( 'give_gateway_payfast', 'lsx_give_payfast_process_payment' );
 
 /**
  * Processes the order and redirect to the PayFast Merchant page
  */
 
-function payfast_get_realip() {
+function lsx_give_payfast_get_realip() {
 	$client  = wp_unslash( $_SERVER['HTTP_CLIENT_IP'] );
 	$forward = wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] );
 	$remote  = wp_unslash( $_SERVER['REMOTE_ADDR'] );
@@ -208,7 +195,7 @@ function payfast_get_realip() {
 /**
  * An action that handles the call from PayFast to tell Give the order was Completed
  */
-function payfast_ipn() {
+function lsx_give_payfast_ipn() {
 	$lsx_options = lsx_get_settings();
 
 	if ( isset( $_REQUEST['m_payment_id'] ) ) {
@@ -247,7 +234,7 @@ function payfast_ipn() {
 
 		if ( lsx_is_test_mode() ) {
 			// translators:
-			lsx_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
+			lsx_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'lsx-give-payfast' ), $_POST['signature'], $signature ) );
 		}
 
 		if ( $signature != $_POST['signature'] ) {
@@ -267,7 +254,7 @@ function payfast_ipn() {
 			);
 
 			$valid_ips  = array();
-			$sender_ip = payfast_get_realip();
+			$sender_ip = lsx_give_payfast_get_realip();
 			foreach ( $valid_hosts as $pf_hostname ) {
 				$ips = gethostbynamel( $pf_hostname );
 
@@ -291,7 +278,7 @@ function payfast_ipn() {
 		*/
 		if ( false !== $pf_error ) {
 			// translators:
-			lsx_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'Payment Failed. The error is %s.', 'payfast_give' ), print_r( $pf_error, true ) ) );
+			lsx_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'Payment Failed. The error is %s.', 'lsx-give-payfast' ), print_r( $pf_error, true ) ) );
 		} else {
 
 			$response = wp_remote_post(
@@ -311,7 +298,7 @@ function payfast_ipn() {
 				lsx_insert_payment_note(
 					$_POST['m_payment_id'], sprintf(
 						// translators:
-						__( 'PayFast ITN Params - %1$s %2$s.', 'payfast_give' ), $pf_host, print_r(
+						__( 'PayFast ITN Params - %1$s %2$s.', 'lsx-give-payfast' ), $pf_host, print_r(
 							array(
 								'method'      => 'POST',
 								'timeout'     => 60,
@@ -326,7 +313,7 @@ function payfast_ipn() {
 					)
 				);
 				// translators:
-				lsx_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast ITN Response. %s.', 'payfast_give' ), print_r( $response['body'], true ) ) );
+				lsx_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast ITN Response. %s.', 'lsx-give-payfast' ), print_r( $response['body'], true ) ) );
 			}
 
 			if ( ! is_wp_error( $response ) && ( $response['response']['code'] >= 200 || $response['response']['code'] < 300 ) ) {
@@ -360,18 +347,18 @@ function payfast_ipn() {
 					}
 					lsx_set_payment_transaction_id( $_POST['m_payment_id'], $_POST['pf_payment_id'] );
 					// translators:
-					lsx_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Completed. The Transaction Id is %s.', 'payfast_give' ), $_POST['pf_payment_id'] ) );
+					lsx_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Completed. The Transaction Id is %s.', 'lsx-give-payfast' ), $_POST['pf_payment_id'] ) );
 					lsx_update_payment_status( $_POST['m_payment_id'], 'publish' );
 
 				} else {
 					// translators:
-					lsx_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Failed. The Response is %s.', 'payfast_give' ), print_r( $response['body'], true ) ) );
+					lsx_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Failed. The Response is %s.', 'lsx-give-payfast' ), print_r( $response['body'], true ) ) );
 				}
 			}
 		}
 	}
 }
-add_action( 'wp_head', 'payfast_ipn' );
+add_action( 'wp_head', 'lsx_give_payfast_ipn' );
 
 /**
  * Registers our PayFast setting with Give.
@@ -379,40 +366,40 @@ add_action( 'wp_head', 'payfast_ipn' );
  * @param  $settings
  * @return array
  */
-function payfast_add_settings( $settings ) {
+function lsx_give_payfast_add_settings( $settings ) {
 
 	$payfast_settings = array(
 
 		array(
 			'id'   => 'payfast_settings',
-			'name' => __( 'PayFast Settings', 'payfast_give' ),
+			'name' => __( 'PayFast Settings', 'lsx-give-payfast' ),
 			'type' => 'give_title',
 		),
 		array(
 			'id'   => 'payfast_api_email',
-			'name' => __( 'Email Address', 'payfast_give' ),
-			'desc' => __( 'This is the email address you used to purchase the plugin.', 'payfast_give' ),
+			'name' => __( 'Email Address', 'lsx-give-payfast' ),
+			'desc' => __( 'This is the email address you used to purchase the plugin.', 'lsx-give-payfast' ),
 			'type' => 'text',
 			'size' => 'regular',
 		),
 		array(
 			'id'   => 'payfast_customer_id',
-			'name' => __( 'PayFast Merchant Id', 'payfast_give' ),
-			'desc' => __( 'Please enter your PayFast Merchant Id; this is needed in order to take payment.', 'payfast_give' ),
+			'name' => __( 'PayFast Merchant Id', 'lsx-give-payfast' ),
+			'desc' => __( 'Please enter your PayFast Merchant Id; this is needed in order to take payment.', 'lsx-give-payfast' ),
 			'type' => 'text',
 			'size' => 'regular',
 		),
 		array(
 			'id'   => 'payfast_key',
-			'name' => __( 'PayFast Key', 'payfast_give' ),
-			'desc' => __( 'Please enter your PayFast Key; this is needed in order to take payment.', 'payfast_give' ),
+			'name' => __( 'PayFast Key', 'lsx-give-payfast' ),
+			'desc' => __( 'Please enter your PayFast Key; this is needed in order to take payment.', 'lsx-give-payfast' ),
 			'type' => 'text',
 			'size' => 'regular',
 		),
 		array(
 			'id'   => 'payfast_pass_phrase',
-			'name' => __( 'pass_phrase', 'payfast_give' ),
-			'desc' => __( 'This is set by yourself in the "Settings" section of the logged in area of the PayFast Dashboard.', 'payfast_give' ),
+			'name' => __( 'pass_phrase', 'lsx-give-payfast' ),
+			'desc' => __( 'This is set by yourself in the "Settings" section of the logged in area of the PayFast Dashboard.', 'lsx-give-payfast' ),
 			'type' => 'text',
 			'size' => 'regular',
 		),
@@ -420,4 +407,4 @@ function payfast_add_settings( $settings ) {
 
 	return array_merge( $settings, $payfast_settings );
 }
-add_filter( 'give_settings_gateways', 'payfast_add_settings' );
+add_filter( 'give_settings_gateways', 'lsx_give_payfast_add_settings' );
