@@ -26,7 +26,7 @@ add_action( 'init', 'lsx_give_payfast_recurring' );
 /**
  * PayFast does not need a CC form, so remove it.
  */
-add_action( 'lsx_give_payfast_cc_form', '__return_false' );
+add_action( 'give_payfast_cc_form', '__return_false' );
 
 /**
  *    Registers our text domain with WP
@@ -52,7 +52,7 @@ add_filter( 'give_payment_gateways', 'lsx_give_payfast_register_gateway' );
  * Processes the order and redirect to the PayFast Merchant page
  */
 function lsx_give_payfast_process_payment( $purchase_data, $recurring = false ) {
-	$lsx_options = lsx_get_settings();
+	$lsx_options = give_get_settings();
 
 	// check there is a gateway name.
 	if ( ! isset( $purchase_data['post_data']['give-gateway'] ) ) {
@@ -67,7 +67,7 @@ function lsx_give_payfast_process_payment( $purchase_data, $recurring = false ) 
 		'date'            => $purchase_data['date'],
 		'user_email'      => $purchase_data['user_email'],
 		'purchase_key'    => $purchase_data['purchase_key'],
-		'currency'        => lsx_get_currency(),
+		'currency'        => give_get_currency(),
 		'user_info'       => $purchase_data['user_info'],
 		'status'          => 'pending',
 		'gateway'         => 'payfast',
@@ -79,25 +79,25 @@ function lsx_give_payfast_process_payment( $purchase_data, $recurring = false ) 
 
 	foreach ( $required as $field => $error ) {
 		if ( ! $purchase_data['post_data'][ $field ] ) {
-			lsx_set_error( 'billing_error', $error );
+			give_set_error( 'billing_error', $error );
 		}
 	}
 
-	$errors = lsx_get_errors();
+	$errors = give_get_errors();
 
 	if ( $errors ) {
 		// problems? send back.
-		lsx_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['give-gateway'] );
+		give_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['give-gateway'] );
 	} else {
 
 		// not a recurring- do payment insert.
 		if ( false === $recurring ) {
 			// record the pending payment.
-			$payment = lsx_insert_payment( $payment_data );
+			$payment = give_insert_payment( $payment_data );
 			// check payment.
 			if ( ! $payment ) {
 				// problems? send back.
-				lsx_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['give-gateway'] );
+				give_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['give-gateway'] );
 			}
 		} else {
 
@@ -109,7 +109,7 @@ function lsx_give_payfast_process_payment( $purchase_data, $recurring = false ) 
 		$seckey = $lsx_options['payfast_customer_id'] . $lsx_options['payfast_key'] . $total;
 		$seckey = md5( $seckey );
 
-		if ( lsx_is_test_mode() ) {
+		if ( give_is_test_mode() ) {
 			// test mode.
 			$payfast_url = 'https://sandbox.payfast.co.za/eng/process';
 		} else {
@@ -120,7 +120,7 @@ function lsx_give_payfast_process_payment( $purchase_data, $recurring = false ) 
 		$redirect     = get_permalink( $lsx_options['success_page'] );
 		$query_string = null;
 
-		$permalink = lsx_get_failed_transaction_uri();
+		$permalink = give_get_failed_transaction_uri();
 		$cancelurl = add_query_arg( 'error', '', $permalink );
 
 		$payfast_args  = 'merchant_id=' . $lsx_options['payfast_customer_id'];
@@ -196,13 +196,13 @@ function lsx_give_payfast_get_realip() {
  * An action that handles the call from PayFast to tell Give the order was Completed
  */
 function lsx_give_payfast_ipn() {
-	$lsx_options = lsx_get_settings();
+	$lsx_options = give_get_settings();
 
 	if ( isset( $_REQUEST['m_payment_id'] ) ) {
 
-		if ( lsx_is_test_mode() ) {
+		if ( give_is_test_mode() ) {
 			$pf_host = 'https://sandbox.payfast.co.za/eng/query/validate';
-			lsx_insert_payment_note( $_REQUEST['m_payment_id'], 'ITN callback has been triggered.' );
+			give_insert_payment_note( $_REQUEST['m_payment_id'], 'ITN callback has been triggered.' );
 		} else {
 			$pf_host = 'https://www.payfast.co.za/eng/query/validate';
 		}
@@ -232,9 +232,9 @@ function lsx_give_payfast_ipn() {
 		}
 		$signature = md5( $pf_param_string );
 
-		if ( lsx_is_test_mode() ) {
+		if ( give_is_test_mode() ) {
 			// translators:
-			lsx_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'lsx-give-payfast' ), $_POST['signature'], $signature ) );
+			give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'lsx-give-payfast' ), $_POST['signature'], $signature ) );
 		}
 
 		if ( $signature != $_POST['signature'] ) {
@@ -278,7 +278,7 @@ function lsx_give_payfast_ipn() {
 		*/
 		if ( false !== $pf_error ) {
 			// translators:
-			lsx_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'Payment Failed. The error is %s.', 'lsx-give-payfast' ), print_r( $pf_error, true ) ) );
+			give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'Payment Failed. The error is %s.', 'lsx-give-payfast' ), print_r( $pf_error, true ) ) );
 		} else {
 
 			$response = wp_remote_post(
@@ -294,8 +294,8 @@ function lsx_give_payfast_ipn() {
 				)
 			);
 
-			if ( lsx_is_test_mode() ) {
-				lsx_insert_payment_note(
+			if ( give_is_test_mode() ) {
+				give_insert_payment_note(
 					$_POST['m_payment_id'], sprintf(
 						// translators:
 						__( 'PayFast ITN Params - %1$s %2$s.', 'lsx-give-payfast' ), $pf_host, print_r(
@@ -313,7 +313,7 @@ function lsx_give_payfast_ipn() {
 					)
 				);
 				// translators:
-				lsx_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast ITN Response. %s.', 'lsx-give-payfast' ), print_r( $response['body'], true ) ) );
+				give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast ITN Response. %s.', 'lsx-give-payfast' ), print_r( $response['body'], true ) ) );
 			}
 
 			if ( ! is_wp_error( $response ) && ( $response['response']['code'] >= 200 || $response['response']['code'] < 300 ) ) {
@@ -336,7 +336,7 @@ function lsx_give_payfast_ipn() {
 				if ( 'COMPLETE' == $_POST['payment_status'] ) {
 
 					if ( ! empty( $_POST['custom_str2'] ) ) {
-						$subscription = new LSX_Subscription( $_POST['custom_str2'], true );
+						$subscription = new Give_Subscription( $_POST['custom_str2'], true );
 						// Retrieve pending subscription from database and update it's status to active and set proper profile ID.
 						$subscription->update(
 							array(
@@ -345,14 +345,14 @@ function lsx_give_payfast_ipn() {
 							)
 						);
 					}
-					lsx_set_payment_transaction_id( $_POST['m_payment_id'], $_POST['pf_payment_id'] );
+					give_set_payment_transaction_id( $_POST['m_payment_id'], $_POST['pf_payment_id'] );
 					// translators:
-					lsx_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Completed. The Transaction Id is %s.', 'lsx-give-payfast' ), $_POST['pf_payment_id'] ) );
-					lsx_update_payment_status( $_POST['m_payment_id'], 'publish' );
+					give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Completed. The Transaction Id is %s.', 'lsx-give-payfast' ), $_POST['pf_payment_id'] ) );
+					give_update_payment_status( $_POST['m_payment_id'], 'publish' );
 
 				} else {
 					// translators:
-					lsx_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Failed. The Response is %s.', 'lsx-give-payfast' ), print_r( $response['body'], true ) ) );
+					give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Failed. The Response is %s.', 'lsx-give-payfast' ), print_r( $response['body'], true ) ) );
 				}
 			}
 		}
