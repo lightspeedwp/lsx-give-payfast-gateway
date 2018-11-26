@@ -1,4 +1,4 @@
-=== PayFast Gateway for Give ===
+=== LSX PayFast Gateway for Give ===
 Tags: payment gateway, payfast, lsx, give, donations
 Requires at least: 4.3
 Tested up to: 4.9.8
