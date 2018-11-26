@@ -1,8 +1,8 @@
 <?php
 /**
- * An extension of the Give-Recurring-Gateway Class
+ * An extension of the LSX-Recurring-Gateway Class
  *
- * @package   give-payfast
+ * @package   lsx-payfast
  * @author    LightSpeed
  * @license   GPL-3.0+
  * @link
@@ -14,16 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'Give_Recurring_Gateway' ) ) {
+if ( ! class_exists( 'LSX_Recurring_Gateway' ) ) {
 	return;
 }
 
-global $give_recurring_payfast;
+global $lsx_recurring_payfast;
 
 /**
- * Class Give_Recurring_PayFast
+ * Class LSX_Recurring_PayFast
  */
-class Give_Recurring_PayFast extends Give_Recurring_Gateway {
+class LSX_Recurring_PayFast extends LSX_Recurring_Gateway {
 
 
 	/**
@@ -41,8 +41,8 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 		$this->offsite = true;
 
 		// Cancellation action.
-		add_action( 'give_recurring_cancel_payfast_subscription', array( $this, 'cancel' ), 10, 2 );
-		add_action( 'give_subscription_cancelled', array( $this, 'cancel' ), 11, 2 );
+		add_action( 'lsx_recurring_cancel_payfast_subscription', array( $this, 'cancel' ), 10, 2 );
+		add_action( 'lsx_subscription_cancelled', array( $this, 'cancel' ), 11, 2 );
 
 		// Validate payfast periods.
 		add_action( 'save_post', array( $this, 'validate_recurring_period' ) );
@@ -73,11 +73,11 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	function validate_recurring_period( $form_id = 0 ) {
 
 		global $post;
-		$recurring_option = isset( $_REQUEST['_give_recurring'] ) ? $_REQUEST['_give_recurring'] : 'no';
-		$set_or_multi     = isset( $_REQUEST['_give_price_option'] ) ? $_REQUEST['_give_price_option'] : '';
+		$recurring_option = isset( $_REQUEST['_lsx_recurring'] ) ? $_REQUEST['_lsx_recurring'] : 'no';
+		$set_or_multi     = isset( $_REQUEST['_lsx_price_option'] ) ? $_REQUEST['_lsx_price_option'] : '';
 
 		// Sanity Checks.
-		if ( ! class_exists( 'Give_Recurring' ) ) {
+		if ( ! class_exists( 'LSX_Recurring' ) ) {
 			return $form_id;
 		}
 		if ( 'no' == $recurring_option ) {
@@ -97,7 +97,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 		}
 
 		// Is this gateway active.
-		if ( ! give_is_gateway_active( $this->id ) ) {
+		if ( ! lsx_is_gateway_active( $this->id ) ) {
 			return $form_id;
 		}
 
@@ -115,7 +115,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 					) );
 				}
 			}
-		} elseif ( Give_Recurring()->is_recurring( $form_id ) ) {
+		} elseif ( LSX_Recurring()->is_recurring( $form_id ) ) {
 
 			$period = isset( $_REQUEST['_give_period'] ) ? $_REQUEST['_give_period'] : 0;
 
@@ -151,16 +151,16 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	 * @return bool
 	 */
 	public function cancel( $subscription_id, $subscription ) {
-		$give_options = give_get_settings();
+		$lsx_options = lsx_get_settings();
 
 		if ( isset( $subscription->gateway ) && 'payfast' !== $subscription->gateway ) {
 			return false;
 		}
 
 		// pass_phrase - must be set on the merchant account for recurring billing.
-		$pass_phrase = $give_options['payfast_pass_phrase'];
-		if ( isset( $give_options['payfast_pass_phrase'] ) && ! empty( $give_options['payfast_pass_phrase'] ) ) {
-			$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
+		$pass_phrase = $lsx_options['payfast_pass_phrase'];
+		if ( isset( $lsx_options['payfast_pass_phrase'] ) && ! empty( $lsx_options['payfast_pass_phrase'] ) ) {
+			$pass_phrase = trim( $lsx_options['payfast_pass_phrase'] );
 		}
 
 		// array of the data that will be sent to the API for use in the signature generation
@@ -204,7 +204,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
 		// set up the url.
 		$url = 'https://api.payfast.co.za/subscriptions/' . $subscription->profile_id . '/cancel';
-		if ( give_is_test_mode() ) {
+		if ( lsx_is_test_mode() ) {
 			$url .= '?testing=true';
 		}
 
@@ -250,10 +250,10 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	 */
 	public function complete_signup() {
 
-		$subscription = new Give_Subscription( $this->subscriptions['profile_id'], true );
+		$subscription = new LSX_Subscription( $this->subscriptions['profile_id'], true );
 		payfast_process_payment( $this->purchase_data, $subscription );
 
 	}
 }
 
-$give_recurring_payfast = new Give_Recurring_PayFast();
+$lsx_recurring_payfast = new LSX_Recurring_PayFast();
