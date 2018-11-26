@@ -2,7 +2,7 @@
 /**
  * An extension of the Give-Recurring-Gateway Class
  *
- * @package   give-payfast
+ * @package   lsx-give-payfast
  * @author    LightSpeed
  * @license   GPL-3.0+
  * @link
@@ -18,12 +18,12 @@ if ( ! class_exists( 'Give_Recurring_Gateway' ) ) {
 	return;
 }
 
-global $give_recurring_payfast;
+global $lsx_give_recurring_payfast;
 
 /**
- * Class Give_Recurring_PayFast
+ * Class LSX_Recurring_PayFast
  */
-class Give_Recurring_PayFast extends Give_Recurring_Gateway {
+class LSX_Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
 
 	/**
@@ -73,11 +73,11 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	function validate_recurring_period( $form_id = 0 ) {
 
 		global $post;
-		$recurring_option = isset( $_REQUEST['_give_recurring'] ) ? $_REQUEST['_give_recurring'] : 'no';
-		$set_or_multi     = isset( $_REQUEST['_give_price_option'] ) ? $_REQUEST['_give_price_option'] : '';
+		$recurring_option = isset( $_REQUEST['_lsx_recurring'] ) ? $_REQUEST['_lsx_recurring'] : 'no';
+		$set_or_multi     = isset( $_REQUEST['_lsx_price_option'] ) ? $_REQUEST['_lsx_price_option'] : '';
 
 		// Sanity Checks.
-		if ( ! class_exists( 'Give_Recurring' ) ) {
+		if ( ! class_exists( 'LSX_Recurring' ) ) {
 			return $form_id;
 		}
 		if ( 'no' == $recurring_option ) {
@@ -101,7 +101,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 			return $form_id;
 		}
 
-		$message = __( 'PayFast Only allows for Monthly and Yearly recurring donations. Please revise your selection.', 'give-recurring' );
+		$message = __( 'PayFast Only allows for Monthly and Yearly recurring donations. Please revise your selection.', 'lsx-give-payfast' );
 
 		if ( 'yes_admin' == $set_or_multi && 'multi' == $recurring_option ) {
 
@@ -110,7 +110,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 				$period = isset( $price['_give_period'] ) ? $price['_give_period'] : 0;
 
 				if ( in_array( $period, array( 'day', 'week' ) ) ) {
-					wp_die( esc_html( $message ), esc_html__( 'Error', 'give-recurring' ), array(
+					wp_die( esc_html( $message ), esc_html__( 'Error', 'lsx-give-payfast' ), array(
 						'response' => 400,
 					) );
 				}
@@ -120,7 +120,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 			$period = isset( $_REQUEST['_give_period'] ) ? $_REQUEST['_give_period'] : 0;
 
 			if ( in_array( $period, array( 'day', 'week' ) ) ) {
-				wp_die( esc_html( $message ) , esc_html__( 'Error', 'give-recurring' ), array(
+				wp_die( esc_html( $message ) , esc_html__( 'Error', 'lsx-give-payfast' ), array(
 					'response' => 400,
 				) );
 			}
@@ -151,16 +151,16 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	 * @return bool
 	 */
 	public function cancel( $subscription_id, $subscription ) {
-		$give_options = give_get_settings();
+		$lsx_options = give_get_settings();
 
 		if ( isset( $subscription->gateway ) && 'payfast' !== $subscription->gateway ) {
 			return false;
 		}
 
 		// pass_phrase - must be set on the merchant account for recurring billing.
-		$pass_phrase = $give_options['payfast_pass_phrase'];
-		if ( isset( $give_options['payfast_pass_phrase'] ) && ! empty( $give_options['payfast_pass_phrase'] ) ) {
-			$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
+		$pass_phrase = $lsx_options['payfast_pass_phrase'];
+		if ( isset( $lsx_options['payfast_pass_phrase'] ) && ! empty( $lsx_options['payfast_pass_phrase'] ) ) {
+			$pass_phrase = trim( $lsx_options['payfast_pass_phrase'] );
 		}
 
 		// array of the data that will be sent to the API for use in the signature generation
@@ -251,9 +251,9 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	public function complete_signup() {
 
 		$subscription = new Give_Subscription( $this->subscriptions['profile_id'], true );
-		payfast_process_payment( $this->purchase_data, $subscription );
+		lsx_give_payfast_process_payment( $this->purchase_data, $subscription );
 
 	}
 }
 
-$give_recurring_payfast = new Give_Recurring_PayFast();
+$lsx_give_recurring_payfast = new LSX_Give_Recurring_PayFast();
