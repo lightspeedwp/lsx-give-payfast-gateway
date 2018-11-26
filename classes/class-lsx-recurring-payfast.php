@@ -1,8 +1,8 @@
 <?php
 /**
- * An extension of the LSX-Recurring-Gateway Class
+ * An extension of the Give-Recurring-Gateway Class
  *
- * @package   lsx-payfast
+ * @package   lsx-give-payfast
  * @author    LightSpeed
  * @license   GPL-3.0+
  * @link
@@ -14,16 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'LSX_Recurring_Gateway' ) ) {
+if ( ! class_exists( 'Give_Recurring_Gateway' ) ) {
 	return;
 }
 
-global $lsx_recurring_payfast;
+global $lsx_give_recurring_payfast;
 
 /**
  * Class LSX_Recurring_PayFast
  */
-class LSX_Recurring_PayFast extends LSX_Recurring_Gateway {
+class LSX_Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
 
 	/**
@@ -41,8 +41,8 @@ class LSX_Recurring_PayFast extends LSX_Recurring_Gateway {
 		$this->offsite = true;
 
 		// Cancellation action.
-		add_action( 'lsx_recurring_cancel_payfast_subscription', array( $this, 'cancel' ), 10, 2 );
-		add_action( 'lsx_subscription_cancelled', array( $this, 'cancel' ), 11, 2 );
+		add_action( 'give_recurring_cancel_payfast_subscription', array( $this, 'cancel' ), 10, 2 );
+		add_action( 'give_subscription_cancelled', array( $this, 'cancel' ), 11, 2 );
 
 		// Validate payfast periods.
 		add_action( 'save_post', array( $this, 'validate_recurring_period' ) );
@@ -97,11 +97,11 @@ class LSX_Recurring_PayFast extends LSX_Recurring_Gateway {
 		}
 
 		// Is this gateway active.
-		if ( ! lsx_is_gateway_active( $this->id ) ) {
+		if ( ! give_is_gateway_active( $this->id ) ) {
 			return $form_id;
 		}
 
-		$message = __( 'PayFast Only allows for Monthly and Yearly recurring donations. Please revise your selection.', 'give-recurring' );
+		$message = __( 'PayFast Only allows for Monthly and Yearly recurring donations. Please revise your selection.', 'lsx-give-payfast' );
 
 		if ( 'yes_admin' == $set_or_multi && 'multi' == $recurring_option ) {
 
@@ -110,17 +110,17 @@ class LSX_Recurring_PayFast extends LSX_Recurring_Gateway {
 				$period = isset( $price['_give_period'] ) ? $price['_give_period'] : 0;
 
 				if ( in_array( $period, array( 'day', 'week' ) ) ) {
-					wp_die( esc_html( $message ), esc_html__( 'Error', 'give-recurring' ), array(
+					wp_die( esc_html( $message ), esc_html__( 'Error', 'lsx-give-payfast' ), array(
 						'response' => 400,
 					) );
 				}
 			}
-		} elseif ( LSX_Recurring()->is_recurring( $form_id ) ) {
+		} elseif ( Give_Recurring()->is_recurring( $form_id ) ) {
 
 			$period = isset( $_REQUEST['_give_period'] ) ? $_REQUEST['_give_period'] : 0;
 
 			if ( in_array( $period, array( 'day', 'week' ) ) ) {
-				wp_die( esc_html( $message ) , esc_html__( 'Error', 'give-recurring' ), array(
+				wp_die( esc_html( $message ) , esc_html__( 'Error', 'lsx-give-payfast' ), array(
 					'response' => 400,
 				) );
 			}
@@ -151,7 +151,7 @@ class LSX_Recurring_PayFast extends LSX_Recurring_Gateway {
 	 * @return bool
 	 */
 	public function cancel( $subscription_id, $subscription ) {
-		$lsx_options = lsx_get_settings();
+		$lsx_options = give_get_settings();
 
 		if ( isset( $subscription->gateway ) && 'payfast' !== $subscription->gateway ) {
 			return false;
@@ -204,7 +204,7 @@ class LSX_Recurring_PayFast extends LSX_Recurring_Gateway {
 
 		// set up the url.
 		$url = 'https://api.payfast.co.za/subscriptions/' . $subscription->profile_id . '/cancel';
-		if ( lsx_is_test_mode() ) {
+		if ( give_is_test_mode() ) {
 			$url .= '?testing=true';
 		}
 
@@ -250,10 +250,10 @@ class LSX_Recurring_PayFast extends LSX_Recurring_Gateway {
 	 */
 	public function complete_signup() {
 
-		$subscription = new LSX_Subscription( $this->subscriptions['profile_id'], true );
-		payfast_process_payment( $this->purchase_data, $subscription );
+		$subscription = new Give_Subscription( $this->subscriptions['profile_id'], true );
+		lsx_give_payfast_process_payment( $this->purchase_data, $subscription );
 
 	}
 }
 
-$lsx_recurring_payfast = new LSX_Recurring_PayFast();
+$lsx_give_recurring_payfast = new LSX_Give_Recurring_PayFast();
