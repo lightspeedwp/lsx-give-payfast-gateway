@@ -7,24 +7,11 @@
  * Version: 1.2
  * Author URI: https://www.lsdev.biz/products/
  * License: GPL3+
- * Text Domain: replaceme
+ * Text Domain: payfast_give
  * Domain Path: /languages/
 
- @package give-payfast
+ @package lsx-give-payfast-gateway
  **/
-
-/**
- * Run when the plugin is active, and generate a unique password for the site instance.
- */
-function give_payfast_activate_plugin() {
-	$password = get_option( 'give_payfast_instance', false );
-	if ( false === $password ) {
-		$password = Give_Payfast_License::generatePassword();
-		update_option( 'give_payfast_instance', $password );
-	}
-	return $password;
-}
-register_activation_hook( __FILE__, 'give_payfast_activate_plugin' );
 
 /**
  * Includes the PayFast recurring class, if the recurring addon is active
