@@ -32,10 +32,10 @@ Enables PayFast Payment Gateway
 For help with add-ons from LightSpeed, use our support package plan.
 
 = Where can I report bugs or contribute to the project? =
-Bugs can be reported either in our support account or preferably on the LSX PayFast Gateway for Give [GitHub repository](https://github.com/lightspeeddevelopment/give-payfast).
+Bugs can be reported either in our support account or preferably on the LSX PayFast Gateway for Give [GitHub repository](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway).
 
 = The LSX PayFast Gateway for Give plugin is awesome! Can I contribute? =
-Yes you can! Join in on our [GitHub repository](https://github.com/lightspeeddevelopment/give-payfast)
+Yes you can! Join in on our [GitHub repository](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway)
 
 = I need custom functionality for this plugin. Can you build it? =
 Yes. Just send us a message via [contact form](https://www.lsdev.biz/contact/) with precise information about what you require.
