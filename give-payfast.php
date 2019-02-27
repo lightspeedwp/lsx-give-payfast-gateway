@@ -377,7 +377,7 @@ function payfast_add_settings( $settings ) {
 		),
 		array(
 			'id'   => 'payfast_customer_id',
-			'name' => __( 'PayFast Merchant Id', 'payfast_give' ),
+			'name' => __( 'PayFast Merchant ID', 'payfast_give' ),
 			'desc' => __( 'Please enter your PayFast Merchant Id; this is needed in order to take payment.', 'payfast_give' ),
 			'type' => 'text',
 			'size' => 'regular',
