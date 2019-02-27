@@ -391,7 +391,7 @@ function payfast_add_settings( $settings ) {
 		),
 		array(
 			'id'   => 'payfast_pass_phrase',
-			'name' => __( 'pass_phrase', 'payfast_give' ),
+			'name' => __( 'Account Passphrase', 'payfast_give' ),
 			'desc' => __( 'This is set by yourself in the "Settings" section of the logged in area of the PayFast Dashboard.', 'payfast_give' ),
 			'type' => 'text',
 			'size' => 'regular',
