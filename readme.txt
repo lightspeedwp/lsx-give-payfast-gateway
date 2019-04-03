@@ -45,6 +45,7 @@ Yes. Just send us a message via [contact form](https://www.lsdev.biz/contact/) w
 
 = 1.2.1 =
 * DEV - Changed Prefixes
+* DEV - Fixed passphrase signature generation
 
 = 1.2 =
 * Removed Email Sharing Option
