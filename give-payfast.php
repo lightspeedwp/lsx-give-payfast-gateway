@@ -156,13 +156,14 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 		if ( isset( $give_options['payfast_pass_phrase'] ) ) {
 			$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
 		}
+		$signature_str = $payfast_args;
 		if ( ! empty( $pass_phrase ) ) {
-			$payfast_args .= '&pass_phrase=' . urlencode( $pass_phrase );
+			$signature_str .= '&passphrase=' . urlencode( $pass_phrase );
 		}
 
-		update_option( 'first_signature', md5( $payfast_args ) );
+		update_option( 'first_signature', md5( $signature_str ) );
 
-		$payfast_args .= '&signature=' . md5( $payfast_args );
+		$payfast_args .= '&signature=' . md5( $signature_str );
 
 		wp_redirect( $payfast_url . '?' . $payfast_args );
 		exit();
