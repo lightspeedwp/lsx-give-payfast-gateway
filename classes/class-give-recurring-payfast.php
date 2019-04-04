@@ -212,7 +212,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 		$ch = curl_init( $url ); // add "?testing=true" to the end when testing.
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $ch, CURLOPT_HEADER, false );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, true );
 		curl_setopt( $ch, CURLOPT_TIMEOUT, 60 );
 		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $payload ) ); // for the body values such as amount, frequency, & date.
