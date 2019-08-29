@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 1.2.2 =
+* Fix - Fixed not being able to use surnames or names with more than 1 name.
+
 = 1.2.1 =
 * DEV - Changed Prefixes
 * DEV - Fixed passphrase signature generation

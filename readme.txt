@@ -2,7 +2,7 @@
 Tags: payment gateway, payfast, lsx, give, donations
 Requires at least: 4.3
 Tested up to: 5.0
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 Contributors: feedmymedia
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -42,6 +42,9 @@ Yes you can! Join in on our [GitHub repository](https://github.com/lightspeeddev
 Yes. Just send us a message via [contact form](https://www.lsdev.biz/contact/) with precise information about what you require.
 
 == Changelog ==
+
+= 1.2.2 =
+* Fix - Fixed not being able to use surnames or names with more than 1 name.
 
 = 1.2.1 =
 * DEV - Changed Prefixes

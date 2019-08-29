@@ -4,7 +4,7 @@
  * Plugin URI: https://www.lsdev.biz/product/givewp-payfast-integration-addon/
  * Description: LightSpeed’s PayFast Gateway for GiveWP is the only way to use the powerful Give plugin for WordPress to accept Rands in South Africa. Give is a flexible, robust, and simple WordPress plugin for accepting donations directly on your website.
  * Author: LightSpeed
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author URI: https://www.lsdev.biz/products/
  * License: GPL3+
  * Text Domain: payfast_give
@@ -128,8 +128,8 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 		$payfast_args .= '&return_url=' . urlencode( apply_filters( 'give_success_page_redirect', $redirect, 'payfast', $query_string ) );
 		$payfast_args .= '&cancel_url=' . urlencode( $cancelurl );
 		$payfast_args .= '&notify_url=' . urlencode( trailingslashit( home_url() ) );
-		$payfast_args .= '&name_first=' . $purchase_data['post_data']['give_first'];
-		$payfast_args .= '&name_last=' . $purchase_data['post_data']['give_last'];
+		$payfast_args .= '&name_first=' . urlencode( $purchase_data['post_data']['give_first'] );
+		$payfast_args .= '&name_last=' . urlencode( $purchase_data['post_data']['give_last'] );
 		$payfast_args .= '&email_address=' . urlencode( $purchase_data['post_data']['give_email'] );
 		$payfast_args .= '&m_payment_id=' . $payment;
 		$payfast_args .= '&amount=' . $total;
