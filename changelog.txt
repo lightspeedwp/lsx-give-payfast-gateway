@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 1.2.3 = In Development
+* Dev - Adding the .gitattributes file to remove unnecessary files from the WordPress version.
+
 = 1.2.2 =
 * Fix - Fixed not being able to use surnames or names with more than 1 name.
 
