@@ -1,6 +1,6 @@
 == Changelog ==
 
-= 1.2.3 = In Development
+= 1.2.3 =
 * Dev - Adding the .gitattributes file to remove unnecessary files from the WordPress version.
 
 = 1.2.2 =
