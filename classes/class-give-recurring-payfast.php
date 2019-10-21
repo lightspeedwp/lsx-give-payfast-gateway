@@ -157,10 +157,10 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 			return false;
 		}
 
-		// pass_phrase - must be set on the merchant account for recurring billing.
-		$pass_phrase = $give_options['payfast_pass_phrase'];
-		if ( isset( $give_options['payfast_pass_phrase'] ) && ! empty( $give_options['payfast_pass_phrase'] ) ) {
-			$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
+		// passphrase - must be set on the merchant account for recurring billing.
+		$passphrase = $give_options['payfast_passphrase'];
+		if ( isset( $give_options['payfast_passphrase'] ) && ! empty( $give_options['payfast_passphrase'] ) ) {
+			$passphrase = trim( $give_options['payfast_passphrase'] );
 		}
 
 		// array of the data that will be sent to the API for use in the signature generation
@@ -179,9 +179,9 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 			$pf_data[ $key ] = stripslashes( trim( $val ) );
 		}
 
-		// check if a pass_phrase has been set - must be set.
-		if ( isset( $pass_phrase ) ) {
-			$pf_data['pass_phrase'] = stripslashes( trim( $pass_phrase ) );
+		// check if a passphrase has been set - must be set.
+		if ( isset( $passphrase ) ) {
+			$pf_data['passphrase'] = stripslashes( trim( $passphrase ) );
 		}
 
 		// sort the array by key, alphabetically.
