@@ -106,7 +106,7 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 
 		$total = $purchase_data['price'];
 
-		$seckey = $give_options['payfast_customer_id'] . $give_options['payfast_key'] . $total;
+		$seckey = $give_options['payfast_merchant_id'] . $give_options['payfast_merchant_key'] . $total;
 		$seckey = md5( $seckey );
 
 		if ( give_is_test_mode() ) {
@@ -123,8 +123,8 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 		$permalink = give_get_failed_transaction_uri();
 		$cancelurl = add_query_arg( 'error', '', $permalink );
 
-		$payfast_args  = 'merchant_id=' . $give_options['payfast_customer_id'];
-		$payfast_args .= '&merchant_key=' . $give_options['payfast_key'];
+		$payfast_args  = 'merchant_id=' . $give_options['payfast_merchant_id'];
+		$payfast_args .= '&merchant_key=' . $give_options['payfast_merchant_key'];
 		$payfast_args .= '&return_url=' . urlencode( apply_filters( 'give_success_page_redirect', $redirect, 'payfast', $query_string ) );
 		$payfast_args .= '&cancel_url=' . urlencode( $cancelurl );
 		$payfast_args .= '&notify_url=' . urlencode( trailingslashit( home_url() ) );
@@ -153,12 +153,12 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 
 		}
 
-		if ( isset( $give_options['payfast_pass_phrase'] ) ) {
-			$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
+		if ( isset( $give_options['payfast_passphrase'] ) ) {
+			$passphrase = trim( $give_options['payfast_passphrase'] );
 		}
 		$signature_str = $payfast_args;
-		if ( ! empty( $pass_phrase ) ) {
-			$signature_str .= '&passphrase=' . urlencode( $pass_phrase );
+		if ( ! empty( $passphrase ) ) {
+			$signature_str .= '&passphrase=' . urlencode( $passphrase );
 		}
 
 		update_option( 'first_signature', md5( $signature_str ) );
@@ -224,10 +224,10 @@ function payfast_ipn() {
 			}
 			$pf_param_string = substr( $pf_param_string, 0, - 1 );
 			$validate_string = $pf_param_string;
-			if ( isset( $give_options['payfast_pass_phrase'] ) ) {
-				$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
-				if ( ! empty( $pass_phrase ) ) {
-					$pf_param_string .= '&pass_phrase=' . urlencode( $pass_phrase );
+			if ( isset( $give_options['payfast_passphrase'] ) ) {
+				$passphrase = trim( $give_options['payfast_passphrase'] );
+				if ( ! empty( $passphrase ) ) {
+					$pf_param_string .= '&passphrase=' . urlencode( $passphrase );
 				}
 			}
 		}
@@ -377,21 +377,21 @@ function payfast_add_settings( $settings ) {
 			'type' => 'give_title',
 		),
 		array(
-			'id'   => 'payfast_customer_id',
+			'id'   => 'payfast_merchant_id',
 			'name' => __( 'PayFast Merchant ID', 'payfast_give' ),
 			'desc' => __( 'Please enter your PayFast Merchant Id; this is needed in order to take payment.', 'payfast_give' ),
 			'type' => 'text',
 			'size' => 'regular',
 		),
 		array(
-			'id'   => 'payfast_key',
-			'name' => __( 'PayFast Key', 'payfast_give' ),
+			'id'   => 'payfast_merchant_key',
+			'name' => __( 'PayFast Merchant Key', 'payfast_give' ),
 			'desc' => __( 'Please enter your PayFast Key; this is needed in order to take payment.', 'payfast_give' ),
 			'type' => 'text',
 			'size' => 'regular',
 		),
 		array(
-			'id'   => 'payfast_pass_phrase',
+			'id'   => 'payfast_passphrase',
 			'name' => __( 'Account Passphrase', 'payfast_give' ),
 			'desc' => __( 'This is set by yourself in the "Settings" section of the logged in area of the PayFast Dashboard.', 'payfast_give' ),
 			'type' => 'text',
