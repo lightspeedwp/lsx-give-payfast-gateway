@@ -197,167 +197,170 @@ function payfast_get_realip() {
  * An action that handles the call from PayFast to tell Give the order was Completed
  */
 function payfast_ipn() {
-	$give_options = give_get_settings();
+	if ( function_exists( 'give_get_settings' ) ) {
+		$give_options = give_get_settings();
 
-	if ( isset( $_REQUEST['m_payment_id'] ) ) {
-
-		if ( give_is_test_mode() ) {
-			$pf_host = 'https://sandbox.payfast.co.za/eng/query/validate';
-			give_insert_payment_note( $_REQUEST['m_payment_id'], 'ITN callback has been triggered.' );
-		} else {
-			$pf_host = 'https://www.payfast.co.za/eng/query/validate';
-		}
-
-		$pf_error         = false;
-		$pf_param_string  = '';
-		$validate_string  = '';
-
-		if ( ! $pf_error ) {
-			// Strip any slashes in data.
-			foreach ( $_POST as $key => $val ) {
-				$_POST[ $key ] = stripslashes( $val );
-			}
-			foreach ( $_POST as $key => $val ) {
-				if ( 'signature' != $key ) {
-					$pf_param_string .= $key . '=' . urlencode( $val ) . '&';
-				}
-			}
-			$pf_param_string = substr( $pf_param_string, 0, - 1 );
-			$validate_string = $pf_param_string;
-			if ( isset( $give_options['payfast_pass_phrase'] ) ) {
-				$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
-				if ( ! empty( $pass_phrase ) ) {
-					$pf_param_string .= '&pass_phrase=' . urlencode( $pass_phrase );
-				}
-			}
-		}
-		$signature = md5( $pf_param_string );
-
-		if ( give_is_test_mode() ) {
-			// translators:
-			give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
-		}
-
-		if ( $signature != $_POST['signature'] ) {
-			$pf_error = 'SIGNATURE';
-			$error   = array(
-				'oursig' => $signature,
-				'vars'   => $_POST,
-			);
-		}
-
-		if ( ! $pf_error ) {
-			$valid_hosts = array(
-				'www.payfast.co.za',
-				'sandbox.payfast.co.za',
-				'w1w.payfast.co.za',
-				'w2w.payfast.co.za',
-			);
-
-			$valid_ips  = array();
-			$sender_ip = payfast_get_realip();
-			foreach ( $valid_hosts as $pf_hostname ) {
-				$ips = gethostbynamel( $pf_hostname );
-
-				if ( false !== $ips ) {
-					$valid_ips = array_merge( $valid_ips, $ips );
-				}
-			}
-
-			$valid_ips = array_unique( $valid_ips );
-
-			if ( ! in_array( $sender_ip, $valid_ips ) ) {
-				$pf_error = array(
-					'FROM'  => $sender_ip,
-					'VALID' => $valid_ips,
-				);
-			}
-		}
-
-		/*
-		* If it fails for any reason, add that to the order.
-		*/
-		if ( false !== $pf_error ) {
-			// translators:
-			give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'Payment Failed. The error is %s.', 'payfast_give' ), print_r( $pf_error, true ) ) );
-		} else {
-
-			$response = wp_remote_post(
-				$pf_host, array(
-					'method'      => 'POST',
-					'timeout'     => 60,
-					'redirection' => 5,
-					'httpversion' => '1.0',
-					'blocking'    => true,
-					'headers'     => array(),
-					'body'        => $validate_string,
-					'cookies'     => array(),
-				)
-			);
+		if ( isset( $_REQUEST['m_payment_id'] ) ) {
 
 			if ( give_is_test_mode() ) {
-				give_insert_payment_note(
-					$_POST['m_payment_id'], sprintf(
-						// translators:
-						__( 'PayFast ITN Params - %1$s %2$s.', 'payfast_give' ), $pf_host, print_r(
-							array(
-								'method'      => 'POST',
-								'timeout'     => 60,
-								'redirection' => 5,
-								'httpversion' => '1.0',
-								'blocking'    => true,
-								'headers'     => array(),
-								'body'        => $validate_string,
-								'cookies'     => array(),
-							), true
-						)
-					)
-				);
-				// translators:
-				give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast ITN Response. %s.', 'payfast_give' ), print_r( $response['body'], true ) ) );
+				$pf_host = 'https://sandbox.payfast.co.za/eng/query/validate';
+				give_insert_payment_note( $_REQUEST['m_payment_id'], 'ITN callback has been triggered.' );
+			} else {
+				$pf_host = 'https://www.payfast.co.za/eng/query/validate';
 			}
 
-			if ( ! is_wp_error( $response ) && ( $response['response']['code'] >= 200 || $response['response']['code'] < 300 ) ) {
-				$res = $response['body'];
-				if ( false == $res ) {
-					$pf_error = $response;
+			$pf_error         = false;
+			$pf_param_string  = '';
+			$validate_string  = '';
 
+			if ( ! $pf_error ) {
+				// Strip any slashes in data.
+				foreach ( $_POST as $key => $val ) {
+					$_POST[ $key ] = stripslashes( $val );
+				}
+				foreach ( $_POST as $key => $val ) {
+					if ( 'signature' != $key ) {
+						$pf_param_string .= $key . '=' . urlencode( $val ) . '&';
+					}
+				}
+				$pf_param_string = substr( $pf_param_string, 0, - 1 );
+				$validate_string = $pf_param_string;
+				if ( isset( $give_options['payfast_pass_phrase'] ) ) {
+					$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
+					if ( ! empty( $pass_phrase ) ) {
+						$pf_param_string .= '&pass_phrase=' . urlencode( $pass_phrase );
+					}
 				}
 			}
-		}
+			$signature = md5( $pf_param_string );
 
-		if ( ! $pf_error ) {
-			$lines = explode( "\n", $res );
-		}
+			if ( give_is_test_mode() ) {
+				// translators:
+				give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
+			}
 
-		if ( ! $pf_error ) {
-			$result = trim( $lines[0] );
+			if ( $signature != $_POST['signature'] ) {
+				$pf_error = 'SIGNATURE';
+				$error   = array(
+					'oursig' => $signature,
+					'vars'   => $_POST,
+				);
+			}
 
-			if ( strcmp( $result, 'VALID' ) === 0 ) {
-				if ( 'COMPLETE' == $_POST['payment_status'] ) {
+			if ( ! $pf_error ) {
+				$valid_hosts = array(
+					'www.payfast.co.za',
+					'sandbox.payfast.co.za',
+					'w1w.payfast.co.za',
+					'w2w.payfast.co.za',
+				);
 
-					if ( ! empty( $_POST['custom_str2'] ) ) {
-						$subscription = new Give_Subscription( $_POST['custom_str2'], true );
-						// Retrieve pending subscription from database and update it's status to active and set proper profile ID.
-						$subscription->update(
-							array(
-								'profile_id' => $_POST['token'],
-								'status'     => 'active',
-							)
-						);
+				$valid_ips  = array();
+				$sender_ip = payfast_get_realip();
+				foreach ( $valid_hosts as $pf_hostname ) {
+					$ips = gethostbynamel( $pf_hostname );
+
+					if ( false !== $ips ) {
+						$valid_ips = array_merge( $valid_ips, $ips );
 					}
-					give_set_payment_transaction_id( $_POST['m_payment_id'], $_POST['pf_payment_id'] );
-					// translators:
-					give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Completed. The Transaction Id is %s.', 'payfast_give' ), $_POST['pf_payment_id'] ) );
-					give_update_payment_status( $_POST['m_payment_id'], 'publish' );
+				}
 
-				} else {
+				$valid_ips = array_unique( $valid_ips );
+
+				if ( ! in_array( $sender_ip, $valid_ips ) ) {
+					$pf_error = array(
+						'FROM'  => $sender_ip,
+						'VALID' => $valid_ips,
+					);
+				}
+			}
+
+			/*
+			* If it fails for any reason, add that to the order.
+			*/
+			if ( false !== $pf_error ) {
+				// translators:
+				give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'Payment Failed. The error is %s.', 'payfast_give' ), print_r( $pf_error, true ) ) );
+			} else {
+
+				$response = wp_remote_post(
+					$pf_host, array(
+						'method'      => 'POST',
+						'timeout'     => 60,
+						'redirection' => 5,
+						'httpversion' => '1.0',
+						'blocking'    => true,
+						'headers'     => array(),
+						'body'        => $validate_string,
+						'cookies'     => array(),
+					)
+				);
+
+				if ( give_is_test_mode() ) {
+					give_insert_payment_note(
+						$_POST['m_payment_id'], sprintf(
+							// translators:
+							__( 'PayFast ITN Params - %1$s %2$s.', 'payfast_give' ), $pf_host, print_r(
+								array(
+									'method'      => 'POST',
+									'timeout'     => 60,
+									'redirection' => 5,
+									'httpversion' => '1.0',
+									'blocking'    => true,
+									'headers'     => array(),
+									'body'        => $validate_string,
+									'cookies'     => array(),
+								), true
+							)
+						)
+					);
 					// translators:
-					give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Failed. The Response is %s.', 'payfast_give' ), print_r( $response['body'], true ) ) );
+					give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast ITN Response. %s.', 'payfast_give' ), print_r( $response['body'], true ) ) );
+				}
+
+				if ( ! is_wp_error( $response ) && ( $response['response']['code'] >= 200 || $response['response']['code'] < 300 ) ) {
+					$res = $response['body'];
+					if ( false == $res ) {
+						$pf_error = $response;
+
+					}
+				}
+			}
+
+			if ( ! $pf_error ) {
+				$lines = explode( "\n", $res );
+			}
+
+			if ( ! $pf_error ) {
+				$result = trim( $lines[0] );
+
+				if ( strcmp( $result, 'VALID' ) === 0 ) {
+					if ( 'COMPLETE' == $_POST['payment_status'] ) {
+
+						if ( ! empty( $_POST['custom_str2'] ) ) {
+							$subscription = new Give_Subscription( $_POST['custom_str2'], true );
+							// Retrieve pending subscription from database and update it's status to active and set proper profile ID.
+							$subscription->update(
+								array(
+									'profile_id' => $_POST['token'],
+									'status'     => 'active',
+								)
+							);
+						}
+						give_set_payment_transaction_id( $_POST['m_payment_id'], $_POST['pf_payment_id'] );
+						// translators:
+						give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Completed. The Transaction Id is %s.', 'payfast_give' ), $_POST['pf_payment_id'] ) );
+						give_update_payment_status( $_POST['m_payment_id'], 'publish' );
+
+					} else {
+						// translators:
+						give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Failed. The Response is %s.', 'payfast_give' ), print_r( $response['body'], true ) ) );
+					}
 				}
 			}
 		}
 	}
+
 }
 add_action( 'wp_head', 'payfast_ipn' );
 
