@@ -2,15 +2,15 @@
 /**
  * Plugin Name: LSX PayFast Gateway for Give
  * Plugin URI: https://www.lsdev.biz/product/givewp-payfast-integration-addon/
- * Description: LightSpeed’s PayFast Gateway for GiveWP is the only way to use the powerful Give plugin for WordPress to accept Rands in South Africa. Give is a flexible, robust, and simple WordPress plugin for accepting donations directly on your website.
+ * Description: The LSX PayFast Gateway for GiveWP is the only way to use the powerful Give plugin for WordPress to accept Rands in South Africa. Give is a flexible, robust, and simple WordPress plugin for accepting donations directly on your website.
  * Author: LightSpeed
- * Version: 1.2.3
+ * Version: 1.2.4
  * Author URI: https://www.lsdev.biz/products/
  * License: GPL3+
  * Text Domain: payfast_give
  * Domain Path: /languages/
 
- @package lsx-give-payfast-gateway
+ * @package lsx-give-payfast-gateway
  **/
 
 /**

@@ -1,35 +1,79 @@
-== Changelog ==
+# Change log
 
-= 1.2.3 =
-* Dev - Adding the .gitattributes file to remove unnecessary files from the WordPress version.
 
-= 1.2.2 =
-* Fix - Fixed not being able to use surnames or names with more than 1 name.
+## [Unreleased] - Minor version 1.2.4
 
-= 1.2.1 =
-* DEV - Changed Prefixes
-* DEV - Fixed passphrase signature generation
+### Security
+- General testing to ensure compatibility with latest WordPress version (5.4).
+- General testing to ensure compatibility with latest LSX Theme version (2.7).
 
-= 1.2 =
-* Removed Email Sharing Option
 
-= 1.1.2 =
-* Removed API Class
+## [[1.2.3]](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/releases/tag/1.2.3) - 2019-09-03
 
-= 1.1.1 =
-* Updated the License class
-* Added in a note for when your license is active.
+### Added
+- Adding the .gitattributes file to remove unnecessary files from the WordPress version.
 
-= 1.1.0 =
-* Added recurring donations support
-* Removed the Functions adding the ZAR Currency and Symbol, this is supported Give WP now.
-* Added in PHPDoc Tags for all functions
-* Changed the Global $give_options to call the 'give_get_settings' method.
-* Removed the PassPhrase from the ITN validation call.
 
-= 1.0.1 =
-* Added support for passphrase
-* Fix - corrected the format of the email address when sent to PayFast
+## [[1.2.2]]()
 
-= 1.0.0 =
-* Initial Release
+### Fixed
+- Fixed not being able to use surnames or names with more than 1 name.
+
+
+## [[1.2.1]]()
+
+### Changed
+- Changed Prefixes.
+
+### Fixed
+- Fixed passphrase signature generation
+
+
+## [[1.2.0]]()
+
+### Deprecated
+- Removed Email Sharing Option
+
+
+## [[1.1.2]]()
+
+### Deprecated
+- Removed API Class
+
+
+## [[1.1.1]]()
+
+### Changed
+- Updated the License class.
+
+### Added
+- Added in a note for when your license is active.
+
+
+## [[1.1.0]]()
+
+### Added
+- Added recurring donations support.
+- Added in PHPDoc Tags for all functions.
+
+### Changed
+- Changed the Global $give_options to call the 'give_get_settings' method.
+
+### Deprecated
+- Removed the Functions adding the ZAR Currency and Symbol, this is supported Give WP now.
+- Removed the PassPhrase from the ITN validation call.
+
+
+## [[1.0.1]]()
+
+### Added
+- Added support for passphrase.
+
+### Fixed
+- Corrected the format of the email address when sent to PayFast.
+
+
+## [[1.0.0]]()
+
+### Added
+- Initial Release.
