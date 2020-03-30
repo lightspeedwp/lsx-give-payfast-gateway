@@ -1,7 +1,7 @@
 # Change log
 
 
-## [Unreleased] - Minor version 1.2.4
+## [[1.2.4]](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/releases/tag/1.2.4) - 2020-03-30
 
 ### Security
 - General testing to ensure compatibility with latest WordPress version (5.4).
