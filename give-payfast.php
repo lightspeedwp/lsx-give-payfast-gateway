@@ -4,7 +4,7 @@
  * Plugin URI: https://www.lsdev.biz/product/givewp-payfast-integration-addon/
  * Description: The LSX PayFast Gateway for GiveWP is the only way to use the powerful Give plugin for WordPress to accept Rands in South Africa. Give is a flexible, robust, and simple WordPress plugin for accepting donations directly on your website.
  * Author: LightSpeed
- * Version: 1.2.4
+ * Version: 1.3.0
  * Author URI: https://www.lsdev.biz/products/
  * License: GPL3+
  * Text Domain: payfast_give
@@ -19,9 +19,21 @@
 function give_payfast_recurring() {
 	if ( class_exists( 'Give_Recurring' ) ) {
 		include_once plugin_dir_path( __FILE__ ) . 'classes/class-give-recurring-payfast.php';
+		add_action( 'give_recurring_available_gateways', 'give_payfast_register_gateway' );
 	}
 }
 add_action( 'init', 'give_payfast_recurring' );
+
+/**
+ * Registers the Payfast Recurring Gateway.
+ *
+ * @param  array $gateways
+ * @return array
+ */
+function give_payfast_register_gateway( $gateways ) {
+	$gateways['payfast'] = 'Give_Recurring_PayFast';
+	return $gateways;
+}
 
 /**
  * PayFast does not need a CC form, so remove it.

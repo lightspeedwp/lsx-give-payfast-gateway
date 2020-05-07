@@ -55,7 +55,6 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	 * @since  1.0
 	 */
 	public function create_payment_profiles() {
-
 		// Creates a payment profile and then sets the profile ID.
 		$this->subscriptions['profile_id'] = 'payfast-' . $this->purchase_data['purchase_key'];
 
