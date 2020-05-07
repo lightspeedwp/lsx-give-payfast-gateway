@@ -25,7 +25,7 @@ function give_payfast_recurring() {
 add_action( 'init', 'give_payfast_recurring' );
 
 /**
- * Registers the Payfast Recurring Gateway.
+ * Registers the Gateway with the recurring classes.
  *
  * @param  array $gateways
  * @return array
