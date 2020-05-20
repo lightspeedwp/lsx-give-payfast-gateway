@@ -19,7 +19,6 @@
 function give_payfast_recurring() {
 	if ( class_exists( 'Give_Recurring' ) ) {
 		include_once plugin_dir_path( __FILE__ ) . 'classes/class-give-recurring-payfast.php';
-		add_action( 'give_recurring_available_gateways', 'give_payfast_register_gateway' );
 	}
 }
 add_action( 'init', 'give_payfast_recurring' );
@@ -34,6 +33,7 @@ function give_payfast_register_gateway( $gateways ) {
 	$gateways['payfast'] = 'Give_Recurring_PayFast';
 	return $gateways;
 }
+add_action( 'give_recurring_available_gateways', 'give_payfast_register_gateway' );
 
 /**
  * PayFast does not need a CC form, so remove it.
