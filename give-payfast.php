@@ -248,6 +248,7 @@ function payfast_ipn() {
 
 			if ( give_is_test_mode() ) {
 				// translators:
+				give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Param String %1$s.', 'payfast_give' ), $pf_param_string ) );
 				give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
 			}
 
