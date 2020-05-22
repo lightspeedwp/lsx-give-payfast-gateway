@@ -132,8 +132,7 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 		$redirect     = get_permalink( $give_options['success_page'] );
 		$query_string = null;
 
-		$permalink = give_get_failed_transaction_uri();
-		$cancelurl = add_query_arg( 'error', '', $permalink );
+		$cancelurl = give_get_failed_transaction_uri();
 
 		if ( give_is_test_mode() ) {
 			give_insert_payment_note( $payment, $cancelurl );
