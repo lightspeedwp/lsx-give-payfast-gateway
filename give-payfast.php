@@ -176,7 +176,7 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 		$payfast_args .= '&signature=' . md5( $signature_str );
 
 		if ( give_is_test_mode() && function_exists( 'give_record_log' ) ) {
-			give_record_log( 'Payfast - #' . $payment, '<pre>' . print_r( $payfast_args, true ) . '</pre>', $payment, 'api_requests' );
+			give_record_log( 'Payfast - #' . $payment, '<pre>' . print_r( $payfast_args, true ) . '</pre>', 0, 'api_requests' );
 		}
 
 		wp_redirect( $payfast_url . '?' . $payfast_args );
