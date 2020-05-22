@@ -240,7 +240,7 @@ function payfast_ipn() {
 				}
 				foreach ( $pfData as $key => $val ) {
 					if ( 'signature' != $key ) {
-						$pf_param_string .= $key . '=' . urlencode( $val ) . '&amp;';
+						$pf_param_string .= $key . '=' . urlencode( $val ) . '&';
 					}
 				}
 				$pf_param_string = substr( $pf_param_string, 0, - 1 );
