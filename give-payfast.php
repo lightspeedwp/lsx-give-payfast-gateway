@@ -137,15 +137,15 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 
 		$payfast_args  = 'merchant_id=' . $give_options['payfast_customer_id'];
 		$payfast_args .= '&merchant_key=' . $give_options['payfast_key'];
-		$payfast_args .= '&return_url=' . urlencode( apply_filters( 'give_success_page_redirect', $redirect, 'payfast', $query_string ) );
-		$payfast_args .= '&cancel_url=' . urlencode( $cancelurl );
-		$payfast_args .= '&notify_url=' . urlencode( trailingslashit( home_url() ) );
-		$payfast_args .= '&name_first=' . urlencode( $purchase_data['post_data']['give_first'] );
-		$payfast_args .= '&name_last=' . urlencode( $purchase_data['post_data']['give_last'] );
-		$payfast_args .= '&email_address=' . urlencode( $purchase_data['post_data']['give_email'] );
+		$payfast_args .= '&return_url=' . rawurlencode( apply_filters( 'give_success_page_redirect', $redirect, 'payfast', $query_string ) );
+		$payfast_args .= '&cancel_url=' . rawurlencode( $cancelurl );
+		$payfast_args .= '&notify_url=' . rawurlencode( trailingslashit( home_url() ) );
+		$payfast_args .= '&name_first=' . rawurlencode( $purchase_data['post_data']['give_first'] );
+		$payfast_args .= '&name_last=' . rawurlencode( $purchase_data['post_data']['give_last'] );
+		$payfast_args .= '&email_address=' . rawurlencode( $purchase_data['post_data']['give_email'] );
 		$payfast_args .= '&m_payment_id=' . $payment;
 		$payfast_args .= '&amount=' . $total;
-		$payfast_args .= '&item_name=' . urlencode( $purchase_data['post_data']['give-form-title'] );
+		$payfast_args .= '&item_name=' . rawurlencode( $purchase_data['post_data']['give-form-title'] );
 		$payfast_args .= '&custom_int1=' . $payment;
 		$payfast_args .= '&custom_str1=' . $seckey;
 
@@ -170,7 +170,7 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 		}
 		$signature_str = $payfast_args;
 		if ( ! empty( $pass_phrase ) ) {
-			$signature_str .= '&passphrase=' . urlencode( $pass_phrase );
+			$signature_str .= '&passphrase=' . rawurlencode( $pass_phrase );
 		}
 
 		$payfast_args .= '&signature=' . md5( $signature_str );
