@@ -232,13 +232,15 @@ function payfast_ipn() {
 			$validate_string  = '';
 
 			if ( ! $pf_error ) {
+				$pfData = $_POST;
+
 				// Strip any slashes in data.
-				foreach ( $_POST as $key => $val ) {
-					$_POST[ $key ] = stripslashes( $val );
+				foreach ( $pfData as $key => $val ) {
+					$pfData[ $key ] = stripslashes( $val );
 				}
-				foreach ( $_POST as $key => $val ) {
-					if ( 'signature' != $key && '' !== $val ) {
-						$pf_param_string .= $key . '=' . urlencode( $val ) . '&';
+				foreach ( $pfData as $key => $val ) {
+					if ( 'signature' != $key ) {
+						$pf_param_string .= $key . '=' . urlencode( $val ) . '&amp;';
 					}
 				}
 				$pf_param_string = substr( $pf_param_string, 0, - 1 );
@@ -258,7 +260,7 @@ function payfast_ipn() {
 				give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
 			}
 
-			if ( $signature != $_POST['signature'] ) {
+			if ( $signature != $pfData['signature'] ) {	
 				$pf_error = 'SIGNATURE';
 				$error   = array(
 					'oursig' => $signature,
