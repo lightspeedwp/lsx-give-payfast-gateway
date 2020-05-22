@@ -173,9 +173,11 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 			$signature_str .= '&passphrase=' . urlencode( $pass_phrase );
 		}
 
-		update_option( 'first_signature', md5( $signature_str ) );
-
 		$payfast_args .= '&signature=' . md5( $signature_str );
+
+		if ( give_is_test_mode() && function_exists( 'give_record_log' ) ) {
+			give_record_log( 'Payfast - #' . $payment, '<pre>' . print_r( $payfast_args, true ) . '</pre>', $payment, 'api_requests' );
+		}
 
 		wp_redirect( $payfast_url . '?' . $payfast_args );
 		exit();
@@ -231,7 +233,7 @@ function payfast_ipn() {
 					$_POST[ $key ] = stripslashes( $val );
 				}
 				foreach ( $_POST as $key => $val ) {
-					if ( 'signature' != $key ) {
+					if ( 'signature' != $key && '' !== $val ) {
 						$pf_param_string .= $key . '=' . urlencode( $val ) . '&';
 					}
 				}
