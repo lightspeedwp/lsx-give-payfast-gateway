@@ -135,6 +135,10 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 		$permalink = give_get_failed_transaction_uri();
 		$cancelurl = add_query_arg( 'error', '', $permalink );
 
+		if ( give_is_test_mode() ) {
+			give_insert_payment_note( $payment, $cancelurl );
+		}
+
 		$payfast_args  = 'merchant_id=' . $give_options['payfast_customer_id'];
 		$payfast_args .= '&merchant_key=' . $give_options['payfast_key'];
 		$payfast_args .= '&return_url=' . urlencode( apply_filters( 'give_success_page_redirect', $redirect, 'payfast', $query_string ) );
@@ -178,7 +182,6 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 		if ( give_is_test_mode() && function_exists( 'give_record_log' ) ) {
 			give_record_log( 'Payfast - #' . $payment, $payfast_args, 0, 'api_requests' );
 			give_insert_payment_note( $payment, $payfast_args );
-
 		}
 
 		wp_redirect( $payfast_url . '?' . $payfast_args );
