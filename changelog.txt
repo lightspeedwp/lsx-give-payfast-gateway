@@ -1,5 +1,11 @@
 # Change log
 
+## [1.3.1] - Unreleased
+- Update the plugin to use the same signature generating and verification as the [WooCommerce Extension](https://github.com/woocommerce/woocommerce-gateway-payfast/blob/master/includes/class-wc-gateway-payfast.php#L1046)
+- Disabled the signature on the API calls as its not used.
+ - https://support.payfast.co.za/article/148-how-do-i-integrate-payfast-with-woocommerce
+ - https://support.payfast.co.za/article/152-in-woocommerce-why-am-i-getting-error-signature-is-required
+ - https://support.payfast.co.za/article/261-on-whmcs-i-m-getting-a-signature-mismatch-error-why
 
 ## [[1.2.4]](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/releases/tag/1.2.4) - 2020-03-30
 
