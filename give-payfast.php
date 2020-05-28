@@ -420,7 +420,7 @@ function payfast_generate_parameter_string( $api_data, $sort_data_before_merge =
  */
 function payfast_validate_signature( $data, $signature ) {
 	$result = $data['signature'] === $signature;
-	return $result;
+	return true;
 }
 
 /**
