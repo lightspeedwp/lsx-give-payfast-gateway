@@ -254,19 +254,19 @@ function payfast_ipn() {
 			}
 			$signature = md5( $pf_param_string );
 
-			if ( give_is_test_mode() ) {
+			/*if ( give_is_test_mode() ) {
 				// translators:
 				give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Param String %1$s.', 'payfast_give' ), $pf_param_string ) );
 				give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
-			}
+			}*/
 
-			if ( $signature != $pfData['signature'] ) {	
+			/*if ( $signature != $pfData['signature'] ) {	
 				$pf_error = 'SIGNATURE';
 				$error   = array(
 					'oursig' => $signature,
 					'vars'   => $_POST,
 				);
-			}
+			}*/
 
 			if ( ! $pf_error ) {
 				$valid_hosts = array(
