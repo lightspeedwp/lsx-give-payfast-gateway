@@ -306,7 +306,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 			'price'           => $this->purchase_data['price'],
 			'give_form_title' => $this->purchase_data['post_data']['give-form-title'],
 			'give_form_id'    => intval( $this->purchase_data['post_data']['give-form-id'] ),
-			//'give_price_id'   => $this->get_price_id(),
+			'give_price_id'   => $this->get_price_id(),
 			'date'            => $this->purchase_data['date'],
 			'user_email'      => $this->purchase_data['user_email'],
 			'purchase_key'    => $this->purchase_data['purchase_key'],
@@ -322,7 +322,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 			'name'             => $this->purchase_data['post_data']['give-form-title'],
 			'id'               => $this->purchase_data['post_data']['give-form-id'], // @TODO Deprecate w/ backwards compatiblity.
 			'form_id'          => $this->purchase_data['post_data']['give-form-id'],
-			//'price_id'         => $this->get_price_id(),
+			'price_id'         => $this->get_price_id(),
 			'initial_amount'   => give_sanitize_amount_for_db( $this->purchase_data['price'] ), // add fee here in future.
 			'recurring_amount' => give_sanitize_amount_for_db( $this->purchase_data['price'] ),
 			'period'           => $this->get_interval( $this->purchase_data['period'], $frequency ),
@@ -361,6 +361,20 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 		if ( $errors ) {
 			give_send_back_to_checkout( '?payment-mode=' . $this->id );
 		}
+	}
+
+	/**
+	 * Get price id
+	 *
+	 * @since 1.6.2
+	 * @access private
+	 *
+	 * @return string
+	 */
+	private function get_price_id() {
+		return array_key_exists( 'give-price-id', $this->purchase_data['post_data'] )
+			? $this->purchase_data['post_data']['give-price-id']
+			: '';
 	}
 
 	/**
