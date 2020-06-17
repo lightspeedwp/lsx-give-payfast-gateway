@@ -16,12 +16,9 @@
 /**
  * Includes the PayFast recurring class, if the recurring addon is active
  */
-function give_payfast_recurring() {
-	if ( class_exists( 'Give_Recurring' ) ) {
-		include_once plugin_dir_path( __FILE__ ) . 'classes/class-give-recurring-payfast.php';
-	}
-}
-add_action( 'init', 'give_payfast_recurring' );
+
+
+add_action( 'give_gateway_payfast', 'payfast_process_payment' );
 
 /**
  * Registers the Gateway with the recurring classes.
@@ -30,7 +27,11 @@ add_action( 'init', 'give_payfast_recurring' );
  * @return array
  */
 function give_payfast_register_gateway( $gateways ) {
-	$gateways['payfast'] = 'Give_Recurring_PayFast';
+	if ( class_exists( 'Give_Recurring' ) ) {
+		include_once plugin_dir_path( __FILE__ ) . 'classes/class-give-recurring-payfast.php';
+		$give_recurring_payfast = new Give_Recurring_PayFast();
+		$gateways['payfast']    = 'Give_Recurring_PayFast';
+	}
 	return $gateways;
 }
 add_action( 'give_recurring_available_gateways', 'give_payfast_register_gateway' );
@@ -187,9 +188,7 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 		exit();
 
 	}
-
 }
-add_action( 'give_gateway_payfast', 'payfast_process_payment' );
 
 /**
  * Processes the order and redirect to the PayFast Merchant page

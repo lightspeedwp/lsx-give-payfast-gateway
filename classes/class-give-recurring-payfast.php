@@ -25,7 +25,6 @@ global $give_recurring_payfast;
  */
 class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
-
 	/**
 	 * Setup gateway ID and possibly load API libraries.
 	 *
@@ -34,7 +33,6 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	 * @return void
 	 */
 	public function init() {
-
 		$this->id = 'payfast';
 
 		// create as pending.
@@ -239,6 +237,131 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
 	}
 
+	/**
+	 * Processes the recurring donation form and sends sets up the subscription data for hand-off to the gateway.
+	 *
+	 * @param $donation_data
+	 *
+	 * @access      public
+	 * @since       1.0
+	 * @return      void
+	 *
+	 */
+	public function process_checkout( $donation_data ) {
+
+		// If not a recurring purchase so bail.
+		if ( ! Give_Recurring()->is_donation_recurring( $donation_data ) ) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( $donation_data['gateway_nonce'], 'give-gateway' ) ) {
+			wp_die( __( 'Nonce verification failed.', 'give-recurring' ), __( 'Error', 'give-recurring' ), array( 'response' => 403 ) );
+		}
+
+		// Initial validation.
+		do_action( 'give_recurring_process_checkout', $donation_data, $this );
+
+		$errors = give_get_errors();
+
+		if ( $errors ) {
+			give_send_back_to_checkout( '?payment-mode=' . $this->id );
+		}
+
+		$this->purchase_data = apply_filters( 'give_recurring_purchase_data', $donation_data, $this );
+		$this->user_id       = $donation_data['user_info']['id'];
+		$this->email         = $donation_data['user_info']['email'];
+
+		if ( empty( $this->user_id ) ) {
+			$subscriber = new Give_Donor( $this->email );
+		} else {
+			$subscriber = new Give_Donor( $this->user_id, true );
+		}
+
+		if ( empty( $subscriber->id ) ) {
+
+			$name = sprintf(
+				'%s %s',
+				( ! empty( $donation_data['user_info']['first_name'] ) ? trim( $donation_data['user_info']['first_name'] ) : '' ),
+				( ! empty( $donation_data['user_info']['last_name'] ) ? trim( $donation_data['user_info']['last_name'] ) : '' )
+			);
+
+			$subscriber_data = array(
+				'name'    => trim( $name ),
+				'email'   => $donation_data['user_info']['email'],
+				'user_id' => $this->user_id,
+			);
+
+			$subscriber->create( $subscriber_data );
+
+		}
+
+		$this->customer_id = $subscriber->id;
+
+		// Get billing times.
+		$times = ! empty( $this->purchase_data['times'] ) ? intval( $this->purchase_data['times'] ) : 0;
+		// Get frequency value.
+		$frequency = ! empty( $this->purchase_data['frequency'] ) ? intval( $this->purchase_data['frequency'] ) : 1;
+
+		$payment_data = array(
+			'price'           => $this->purchase_data['price'],
+			'give_form_title' => $this->purchase_data['post_data']['give-form-title'],
+			'give_form_id'    => intval( $this->purchase_data['post_data']['give-form-id'] ),
+			//'give_price_id'   => $this->get_price_id(),
+			'date'            => $this->purchase_data['date'],
+			'user_email'      => $this->purchase_data['user_email'],
+			'purchase_key'    => $this->purchase_data['purchase_key'],
+			'currency'        => give_get_currency(),
+			'user_info'       => $this->purchase_data['user_info'],
+			'status'          => 'pending',
+		);
+
+		// Record the pending payment.
+		$this->payment_id = give_insert_payment( $payment_data );
+
+		$this->subscriptions = apply_filters( 'give_recurring_subscription_pre_gateway_args', array(
+			'name'             => $this->purchase_data['post_data']['give-form-title'],
+			'id'               => $this->purchase_data['post_data']['give-form-id'], // @TODO Deprecate w/ backwards compatiblity.
+			'form_id'          => $this->purchase_data['post_data']['give-form-id'],
+			//'price_id'         => $this->get_price_id(),
+			'initial_amount'   => give_sanitize_amount_for_db( $this->purchase_data['price'] ), // add fee here in future.
+			'recurring_amount' => give_sanitize_amount_for_db( $this->purchase_data['price'] ),
+			'period'           => $this->get_interval( $this->purchase_data['period'], $frequency ),
+			'frequency'        => $this->get_interval_count( $this->purchase_data['period'], $frequency ), // Passed interval. Example: charge every 3 weeks.
+			'bill_times'       => give_recurring_calculate_times( $times, $frequency ),
+			'profile_id'       => '', // Profile ID for this subscription - This is set by the payment gateway.
+			'transaction_id'   => '', // Transaction ID for this subscription - This is set by the payment gateway.
+		) );
+
+		do_action( 'give_recurring_pre_create_payment_profiles', $this );
+
+		// Create subscription payment profiles in the gateway.
+		$this->create_payment_profiles();
+
+		do_action( 'give_recurring_post_create_payment_profiles', $this );
+
+		// Look for errors after trying to create payment profiles.
+		$errors = give_get_errors();
+
+		if ( $errors ) {
+			give_send_back_to_checkout( '?payment-mode=' . $this->id );
+		}
+
+		// Record the subscriptions and finish up.
+		$this->record_signup();
+
+		// Finish the signup process.
+		// Gateways can perform off-site redirects here if necessary.
+		$this->complete_signup();
+
+		// Look for any last errors.
+		$errors = give_get_errors();
+
+		// We shouldn't usually get here, but just in case a new error was recorded,
+		// we need to check for it.
+		if ( $errors ) {
+			give_send_back_to_checkout( '?payment-mode=' . $this->id );
+		}
+	}
 
 	/**
 	 * Creates payment and redirects to PayFast
@@ -248,11 +371,8 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	 * @return void
 	 */
 	public function complete_signup() {
-
 		$subscription = new Give_Subscription( $this->subscriptions['profile_id'], true );
 		payfast_process_payment( $this->purchase_data, $subscription );
 
 	}
 }
-
-$give_recurring_payfast = new Give_Recurring_PayFast();
