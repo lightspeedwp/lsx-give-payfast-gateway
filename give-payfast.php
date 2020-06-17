@@ -358,6 +358,7 @@ function payfast_ipn() {
 					if ( 'COMPLETE' == $_POST['payment_status'] ) {
 
 						if ( ! empty( $_POST['custom_str2'] ) ) {
+
 							$subscription = new Give_Subscription( $_POST['custom_str2'], true );
 							// Retrieve pending subscription from database and update it's status to active and set proper profile ID.
 							$subscription->update(
