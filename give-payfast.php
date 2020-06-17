@@ -4,7 +4,7 @@
  * Plugin URI: https://www.lsdev.biz/product/givewp-payfast-integration-addon/
  * Description: The LSX PayFast Gateway for GiveWP is the only way to use the powerful Give plugin for WordPress to accept Rands in South Africa. Give is a flexible, robust, and simple WordPress plugin for accepting donations directly on your website.
  * Author: LightSpeed
- * Version: 1.3.1
+ * Version: 1.3.0
  * Author URI: https://www.lsdev.biz/products/
  * License: GPL3+
  * Text Domain: payfast_give
@@ -231,15 +231,42 @@ function payfast_ipn() {
 			$pf_param_string  = '';
 			$validate_string  = '';
 
-			$signature = md5( payfast_generate_parameter_string( stripslashes_deep( $_POST ), false, false ) ); // false not to sort data
+			if ( ! $pf_error ) {
+				$pfData = $_POST;
 
-			if ( ! payfast_validate_signature( stripslashes_deep( $_POST ), $signature ) ) {
+				// Strip any slashes in data.
+				foreach ( $pfData as $key => $val ) {
+					$pfData[ $key ] = stripslashes( $val );
+				}
+				foreach ( $pfData as $key => $val ) {
+					if ( 'signature' != $key ) {
+						$pf_param_string .= $key . '=' . urlencode( $val ) . '&';
+					}
+				}
+				$pf_param_string = substr( $pf_param_string, 0, - 1 );
+				$validate_string = $pf_param_string;
+				if ( isset( $give_options['payfast_pass_phrase'] ) ) {
+					$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
+					if ( ! empty( $pass_phrase ) ) {
+						$pf_param_string .= '&pass_phrase=' . urlencode( $pass_phrase );
+					}
+				}
+			}
+			$signature = md5( $pf_param_string );
+
+			if ( give_is_test_mode() ) {
+				// translators:
+				give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Param String %1$s.', 'payfast_give' ), $pf_param_string ) );
+				give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
+			}
+
+			/*if ( $signature != $pfData['signature'] ) {	
 				$pf_error = 'SIGNATURE';
-				$pf_error   = array(
+				$error   = array(
 					'oursig' => $signature,
 					'vars'   => $_POST,
 				);
-			}
+			}*/
 
 			if ( ! $pf_error ) {
 				$valid_hosts = array(
@@ -357,71 +384,6 @@ function payfast_ipn() {
 
 }
 add_action( 'wp_head', 'payfast_ipn' );
-
-
-/**
- * @since 1.4.0 introduced.
- * @param      $api_data
- * @param bool $sort_data_before_merge? default true.
- * @param bool $skip_empty_values Should key value pairs be ignored when generating signature?  Default true.
- *
- * @return string
- */
-function payfast_generate_parameter_string( $api_data, $sort_data_before_merge = true, $skip_empty_values = true, $pass_phrase = false ) {
-
-	// if sorting is required the passphrase should be added in before sort.
-	if ( ! empty( $pass_phrase ) && $sort_data_before_merge && false !== $pass_phrase ) {
-		$api_data['passphrase'] = $pass_phrase;
-	}
-
-	if ( $sort_data_before_merge ) {
-		ksort( $api_data );
-	}
-
-	// concatenate the array key value pairs.
-	$parameter_string = '';
-	foreach ( $api_data as $key => $val ) {
-
-		if ( $skip_empty_values && empty( $val ) ) {
-			continue;
-		}
-
-		if ( 'signature' !== $key ) {
-			$val = urlencode( $val );
-			$parameter_string .= "$key=$val&";
-		}
-	}
-	// when not sorting passphrase should be added to the end before md5.
-	if ( $sort_data_before_merge ) {
-		$parameter_string = rtrim( $parameter_string, '&' );
-	} elseif ( ! empty( $pass_phrase ) ) {
-		$parameter_string .= 'passphrase=' . urlencode( $pass_phrase );
-	} else {
-		$parameter_string = rtrim( $parameter_string, '&' );
-	}
-
-	if ( give_is_test_mode() ) {
-		// translators:
-		give_insert_payment_note( $api_data['m_payment_id'], sprintf( __( 'Param String %1$s.', 'payfast_give' ), $parameter_string ) );
-	}
-
-	return $parameter_string;
-}
-
-/**
- * validate_signature()
- *
- * Validate the signature against the returned data.
- *
- * @param array $data
- * @param string $signature
- * @since 1.0.0
- * @return string
- */
-function payfast_validate_signature( $data, $signature ) {
-	$result = $data['signature'] === $signature;
-	return true;
-}
 
 /**
  * Registers our PayFast setting with Give.
