@@ -370,20 +370,25 @@ function payfast_ipn() {
 									)
 								);
 							} else {
-								$args = array(
-									'amount'         => $_POST['amount_gross'],
-									'transaction_id' => $_POST['pf_payment_id'],
-								);
-
-								$subscription->add_payment( $args );
-								$subscription->renew();
-
-								if ( give_is_test_mode() ) {
-									give_insert_payment_note( $_POST['m_payment_id'], 'Renewal Complete' );
+								// Is this payment already recorded?
+								if ( ! give_get_purchase_id_by_transaction_id( $_POST['pf_payment_id'] ) ) {
+									$args = array(
+										'amount'         => $_POST['amount_gross'],
+										'transaction_id' => $_POST['pf_payment_id'],
+									);
+									$subscription->add_payment( $args );
+									$subscription->renew();
+									if ( give_is_test_mode() ) {
+										give_insert_payment_note( $_POST['m_payment_id'], 'Renewal Complete' );
+									}
+								} else {
+									give_set_payment_transaction_id( $_POST['m_payment_id'], $_POST['pf_payment_id'] );
 								}
 							}
+						} else {
+							give_set_payment_transaction_id( $_POST['m_payment_id'], $_POST['pf_payment_id'] );
 						}
-						give_set_payment_transaction_id( $_POST['m_payment_id'], $_POST['pf_payment_id'] );
+
 						// translators:
 						give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Completed. The Transaction Id is %s.', 'payfast_give' ), $_POST['pf_payment_id'] ) );
 						give_update_payment_status( $_POST['m_payment_id'], 'publish' );

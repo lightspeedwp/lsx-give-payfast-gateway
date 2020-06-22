@@ -247,6 +247,5 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	public function complete_signup() {
 		$subscription = new Give_Subscription( $this->subscriptions['profile_id'], true );
 		payfast_process_payment( $this->purchase_data, $subscription );
-
 	}
 }
