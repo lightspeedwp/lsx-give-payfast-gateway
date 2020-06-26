@@ -358,38 +358,6 @@ function payfast_ipn() {
 					if ( 'COMPLETE' == $_POST['payment_status'] ) {
 
 						if ( ! empty( $_POST['custom_str2'] ) ) {
-
-							$subscription = new Give_Subscription( $_POST['custom_str2'], true );
-
-							if ( ! $subscription || $subscription->id < 1 ) {
-								// Retrieve pending subscription from database and update it's status to active and set proper profile ID.
-								$subscription->update(
-									array(
-										'profile_id' => $_POST['token'],
-										'status'     => 'active',
-									)
-								);
-							}
-							give_set_payment_transaction_id( $_POST['m_payment_id'], $_POST['pf_payment_id'] );
-						} else {
-							give_set_payment_transaction_id( $_POST['m_payment_id'], $_POST['pf_payment_id'] );
-						}
-
-						// translators:
-						give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Completed. The Transaction Id is %s.', 'payfast_give' ), $_POST['pf_payment_id'] ) );
-						give_update_payment_status( $_POST['m_payment_id'], 'publish' );
-
-					} else {
-						// translators:
-						give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Failed. The Response is %s.', 'payfast_give' ), print_r( $response['body'], true ) ) );
-					}
-				}
-
-
-				/*
-					if ( 'COMPLETE' == $_POST['payment_status'] ) {
-
-						if ( ! empty( $_POST['custom_str2'] ) ) {
 							$subscription = new Give_Subscription( $_POST['custom_str2'], true );
 							// Retrieve pending subscription from database and update it's status to active and set proper profile ID.
 							$subscription->update(
@@ -408,11 +376,10 @@ function payfast_ipn() {
 						// translators:
 						give_insert_payment_note( $_POST['m_payment_id'], sprintf( __( 'PayFast Payment Failed. The Response is %s.', 'payfast_give' ), print_r( $response['body'], true ) ) );
 					}
-				*/
+				}
 			}
 		}
 	}
-
 }
 add_action( 'wp_head', 'payfast_ipn' );
 
