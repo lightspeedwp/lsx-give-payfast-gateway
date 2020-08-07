@@ -181,7 +181,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
 		// check if a pass_phrase has been set - must be set.
 		if ( isset( $pass_phrase ) ) {
-			$pf_data['pass_phrase'] = stripslashes( trim( $pass_phrase ) );
+			$pf_data['passphrase'] = stripslashes( trim( $pass_phrase ) );
 		}
 
 		// sort the array by key, alphabetically.

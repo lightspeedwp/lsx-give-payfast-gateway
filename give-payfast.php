@@ -228,7 +228,7 @@ function payfast_ipn() {
 				if ( isset( $give_options['payfast_pass_phrase'] ) ) {
 					$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
 					if ( ! empty( $pass_phrase ) ) {
-						$pf_param_string .= '&pass_phrase=' . urlencode( $pass_phrase );
+						$pf_param_string .= '&passphrase=' . urlencode( $pass_phrase );
 					}
 				}
 			}
