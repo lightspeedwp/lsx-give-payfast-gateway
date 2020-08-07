@@ -231,13 +231,11 @@ function payfast_ipn() {
 			$validate_string  = '';
 
 			if ( ! $pf_error ) {
-				$pfData = $_POST;
-
 				// Strip any slashes in data.
-				foreach ( $pfData as $key => $val ) {
-					$pfData[ $key ] = stripslashes( $val );
+				foreach ( $_POST as $key => $val ) {
+					$_POST[ $key ] = stripslashes( $val );
 				}
-				foreach ( $pfData as $key => $val ) {
+				foreach ( $_POST as $key => $val ) {
 					if ( 'signature' != $key ) {
 						$pf_param_string .= $key . '=' . urlencode( $val ) . '&';
 					}
@@ -247,7 +245,7 @@ function payfast_ipn() {
 				if ( isset( $give_options['payfast_pass_phrase'] ) ) {
 					$pass_phrase = trim( $give_options['payfast_pass_phrase'] );
 					if ( ! empty( $pass_phrase ) ) {
-						$pf_param_string .= '&pass_phrase=' . urlencode( $pass_phrase );
+						$pf_param_string .= '&passphrase=' . urlencode( $pass_phrase );
 					}
 				}
 			}
@@ -255,17 +253,16 @@ function payfast_ipn() {
 
 			if ( give_is_test_mode() ) {
 				// translators:
-				give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Param String %1$s.', 'payfast_give' ), $pf_param_string ) );
 				give_insert_payment_note( $_REQUEST['m_payment_id'], sprintf( __( 'Signature Returned %1$s. Generated Signature %2$s.', 'payfast_give' ), $_POST['signature'], $signature ) );
 			}
 
-			/*if ( $signature != $pfData['signature'] ) {	
+			if ( $signature != $_POST['signature'] ) {
 				$pf_error = 'SIGNATURE';
 				$error   = array(
 					'oursig' => $signature,
 					'vars'   => $_POST,
 				);
-			}*/
+			}
 
 			if ( ! $pf_error ) {
 				$valid_hosts = array(
@@ -380,6 +377,7 @@ function payfast_ipn() {
 			}
 		}
 	}
+
 }
 add_action( 'wp_head', 'payfast_ipn' );
 
