@@ -25,7 +25,6 @@ global $give_recurring_payfast;
  */
 class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
-
 	/**
 	 * Setup gateway ID and possibly load API libraries.
 	 *
@@ -34,7 +33,6 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	 * @return void
 	 */
 	public function init() {
-
 		$this->id = 'payfast';
 
 		// create as pending.
@@ -55,7 +53,6 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	 * @since  1.0
 	 */
 	public function create_payment_profiles() {
-
 		// Creates a payment profile and then sets the profile ID.
 		$this->subscriptions['profile_id'] = 'payfast-' . $this->purchase_data['purchase_key'];
 
@@ -240,7 +237,6 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 
 	}
 
-
 	/**
 	 * Creates payment and redirects to PayFast
 	 *
@@ -249,11 +245,7 @@ class Give_Recurring_PayFast extends Give_Recurring_Gateway {
 	 * @return void
 	 */
 	public function complete_signup() {
-
 		$subscription = new Give_Subscription( $this->subscriptions['profile_id'], true );
 		payfast_process_payment( $this->purchase_data, $subscription );
-
 	}
 }
-
-$give_recurring_payfast = new Give_Recurring_PayFast();

@@ -4,7 +4,7 @@
  * Plugin URI: https://www.lsdev.biz/product/givewp-payfast-integration-addon/
  * Description: The LSX PayFast Gateway for GiveWP is the only way to use the powerful Give plugin for WordPress to accept Rands in South Africa. Give is a flexible, robust, and simple WordPress plugin for accepting donations directly on your website.
  * Author: LightSpeed
- * Version: 1.2.4
+ * Version: 1.2.5
  * Author URI: https://www.lsdev.biz/products/
  * License: GPL3+
  * Text Domain: payfast_give
@@ -16,12 +16,25 @@
 /**
  * Includes the PayFast recurring class, if the recurring addon is active
  */
-function give_payfast_recurring() {
+
+
+add_action( 'give_gateway_payfast', 'payfast_process_payment' );
+
+/**
+ * Registers the Gateway with the recurring classes.
+ *
+ * @param  array $gateways
+ * @return array
+ */
+function give_payfast_register_gateway( $gateways ) {
 	if ( class_exists( 'Give_Recurring' ) ) {
 		include_once plugin_dir_path( __FILE__ ) . 'classes/class-give-recurring-payfast.php';
+		$give_recurring_payfast = new Give_Recurring_PayFast();
+		$gateways['payfast']    = 'Give_Recurring_PayFast';
 	}
+	return $gateways;
 }
-add_action( 'init', 'give_payfast_recurring' );
+add_action( 'give_recurring_available_gateways', 'give_payfast_register_gateway' );
 
 /**
  * PayFast does not need a CC form, so remove it.
@@ -120,8 +133,11 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 		$redirect     = get_permalink( $give_options['success_page'] );
 		$query_string = null;
 
-		$permalink = give_get_failed_transaction_uri();
-		$cancelurl = add_query_arg( 'error', '', $permalink );
+		$cancelurl = give_get_failed_transaction_uri();
+
+		if ( give_is_test_mode() ) {
+			give_insert_payment_note( $payment, $cancelurl );
+		}
 
 		$payfast_args  = 'merchant_id=' . $give_options['payfast_customer_id'];
 		$payfast_args .= '&merchant_key=' . $give_options['payfast_key'];
@@ -161,17 +177,18 @@ function payfast_process_payment( $purchase_data, $recurring = false ) {
 			$signature_str .= '&passphrase=' . urlencode( $pass_phrase );
 		}
 
-		update_option( 'first_signature', md5( $signature_str ) );
-
 		$payfast_args .= '&signature=' . md5( $signature_str );
+
+		if ( give_is_test_mode() && function_exists( 'give_record_log' ) ) {
+			give_record_log( 'Payfast - #' . $payment, $payfast_args, 0, 'api_requests' );
+			give_insert_payment_note( $payment, $payfast_args );
+		}
 
 		wp_redirect( $payfast_url . '?' . $payfast_args );
 		exit();
 
 	}
-
 }
-add_action( 'give_gateway_payfast', 'payfast_process_payment' );
 
 /**
  * Processes the order and redirect to the PayFast Merchant page
