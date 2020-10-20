@@ -1,5 +1,5 @@
 === LSX PayFast Gateway for Give ===
-Tags: payment gateway, payfast, lsx, give, donations
+Tags: lsx, payment gateway, payfast, givewp, donations
 Requires at least: 5.3
 Tested up to: 5.5
 Stable tag: 1.2.5
@@ -10,11 +10,25 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 PayFast payment gateway for Give.
 
 == Description ==
-PayFast payment gateway for Give.
+PayFast is one of the most popular gateways in South Africa. It’s an off-site gateway that allows donors to give securely and then be returned to your website and displayed a donation receipt.
+
+= Getting Started with PayFast = 
+
+In order to accept payments with PayFast using Give you will need to have an active PayFast account, the PayFast Give add-on, and the Give Core plugin installed and activated.
+
+Click here for instructions on installing and activating Give add-ons.
+
+Note: You can always access your add-on purchase receipts, downloads, and licenses from your Give Account dashboard.
+
+After the PayFast add-on is activated, go to “Donations > Settings” and click on the Payment Gateways tab. There you will see the default Payment Gateways (PayPal Standard, Test Payment, and Offline Donations). You should also see PayFast as an option as well. Click on the PayFast checkbox to enable it as an active payment gateway for your website.
 
 
 = It's Free, and always ill be =
 We’re firm believers in open source – that’s why we’re releasing the LSX PayFast Gateway for Give plugin for free, forever. 
+
+= Contributing =
+
+If you're a developer who's spotted a bug issue and have a fix, or simply have functionality you think would extend our core theme, we are always happy to accept your contribution! Visit the [LSX PayFast Gateway for Give on Github](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/) and submit a Pull Request with your updates.
 
 
 == Installation ==
@@ -47,6 +61,3 @@ We offer premium support for this plugin. Premium support that can be purchased 
 
 If you are experiencing issues with the LSX Importer for PayFast payment gateway for Give Plugin & have experience with Github, please log any bug issues you are having on the [PayFast payment gateway for Give Github Issues](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/issues/) page.
 
-== Contributing to the LSX Importer for Wetu Plugin == 
-
-If you're a developer who's spotted a bug issue and have a fix, or simply have functionality you think would extend our core theme, we are always happy to accept your contribution! Visit the [LSX Importer for Wetu Plugin on Github](https://github.com/lightspeeddevelopment/lsx-wetu-importer/) and submit a Pull Request with your updates.
