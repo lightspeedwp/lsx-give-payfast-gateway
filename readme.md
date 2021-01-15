@@ -20,7 +20,7 @@ If you previously bought the add-on, the following information is very important
 Unfortunately you may need to reconfigure payments via PayFast in Give. The plugin changed in a way that could not avoid this.
 
 ## Documentation & Support
-Whether you are an existing or new user of this plugin, detailed setup documentation can be found [here](https://www.lsdev.biz/documentation/lsx-payfast-gateway-for-give/)
+Whether you are an existing or new user of this plugin, detailed setup documentation can be found [here](https://www.lsdev.biz/lsx/documentation/lsx-extensions/lsx-payfast-payment-gateway-for-give/)
 
 The plugin is free, but **we do not offer free support**. Please consult our documentation which answers all questions related to setting the plugin up. If it's not working, please follow the steps below. We recommend you test on a development or staging version of your website, most good hosting companies offer a tool that can easily copy your site to a staging version. If not, contact your host directly to set one up.
 
