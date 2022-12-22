@@ -1,6 +1,15 @@
 # Change log
 
-[[1.2.5]](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/releases/tag/1.2.5) - 2020-08-07
+## [[1.2.6]](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/releases/tag/1.2.5) - 2022-12-23
+
+### Security
+- General testing to ensure compatibility with latest WordPress version (6.1.1).
+- General testing to ensure compatibility with latest Give - Donation Plugin version (2.23.2).
+- General testing to ensure compatibility with latest Give - Recurring Donations (1.12.2).
+
+## [[1.2.5]](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/releases/tag/1.2.5) - 2020-08-07
+
+### Fixed
 - Update the plugin to use the same signature generating and verification as the [WooCommerce Extension](https://github.com/woocommerce/woocommerce-gateway-payfast/blob/master/includes/class-wc-gateway-payfast.php#L1046)
 - Fixed the signature mismatch.
 
