@@ -1,6 +1,11 @@
 # Change log
 
-## [[1.2.6]](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/releases/tag/1.2.5) - 2022-12-23
+## [[1.2.7]](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/releases/tag/1.2.7) - 2023-04-20
+
+### Security
+- General testing to ensure compatibility with latest WordPress version (6.2).
+
+## [[1.2.6]](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/releases/tag/1.2.6) - 2022-12-23
 
 ### Security
 - General testing to ensure compatibility with latest WordPress version (6.1.1).
