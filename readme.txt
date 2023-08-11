@@ -1,8 +1,8 @@
 === LSX PayFast Gateway for Give ===
 Tags: lsx, payment gateway, payfast, givewp, donations
 Requires at least: 5.3
-Tested up to: 6.2
-Stable tag: 1.2.7
+Tested up to: 6.3
+Stable tag: 1.2.8
 Contributors: feedmymedia
 License: GPL3+
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
