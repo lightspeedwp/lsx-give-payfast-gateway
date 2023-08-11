@@ -1,5 +1,12 @@
 # Change log
 
+## [[1.2.8]](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/releases/tag/1.2.8) - 2023-08-09
+
+### Security
+- General testing to ensure compatibility with latest WordPress version (6.3).
+- General testing to ensure compatibility with latest Give - Donation Plugin version (2.31.0).
+- General testing to ensure compatibility with latest Give - Recurring Donations (1.12.2).
+
 ## [[1.2.7]](https://github.com/lightspeeddevelopment/lsx-give-payfast-gateway/releases/tag/1.2.7) - 2023-04-20
 
 ### Security
